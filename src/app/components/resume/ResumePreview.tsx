@@ -67,24 +67,44 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         </section>
       )}
 
-      {/* Experience Placeholder */}
+      {/* Experience */}
       <section className="mb-8">
         <h2 className="text-lg font-bold text-slate-900 uppercase tracking-wider mb-4 border-b-2 border-indigo-600 inline-block pb-1">
           Experiência Profissional
         </h2>
-        <div className="text-slate-500 italic text-sm">
-          A seção de experiências será exibida aqui conforme for adicionada.
-        </div>
+        {data.experience && data.experience.length > 0 ? (
+          data.experience.map((exp, index) => (
+            <div key={index} className="mb-6">
+              <h3 className="font-semibold text-slate-900">{exp.position} at {exp.company}</h3>
+              <p className="text-slate-600 text-sm">{exp.startDate} - {exp.endDate || 'Present'}</p>
+              <p className="text-slate-700 mt-2 whitespace-pre-line">{exp.description}</p>
+            </div>
+          ))
+        ) : (
+          <div className="text-slate-500 italic text-sm">
+            A seção de experiências será exibida aqui conforme for adicionada.
+          </div>
+        )}
       </section>
 
-      {/* Education Placeholder */}
+      {/* Education */}
       <section>
         <h2 className="text-lg font-bold text-slate-900 uppercase tracking-wider mb-4 border-b-2 border-indigo-600 inline-block pb-1">
           Formação Acadêmica
         </h2>
-        <div className="text-slate-500 italic text-sm">
-          A seção de formação será exibida aqui conforme for adicionada.
-        </div>
+        {data.education && data.education.length > 0 ? (
+          data.education.map((edu, index) => (
+            <div key={index} className="mb-4">
+              <h3 className="font-semibold text-slate-900">{edu.degree}</h3>
+              <p className="text-slate-600">{edu.institution}</p>
+              <p className="text-slate-600 text-sm">{edu.year}</p>
+            </div>
+          ))
+        ) : (
+          <div className="text-slate-500 italic text-sm">
+            A seção de formação será exibida aqui conforme for adicionada.
+          </div>
+        )}
       </section>
       
       {/* Styles for printing */}
