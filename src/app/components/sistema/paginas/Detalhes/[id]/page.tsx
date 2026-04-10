@@ -1,4 +1,4 @@
-import { Nav } from '../../../../Nav';
+import { Nav } from '@/app/components/nav/page';
 
 export default function DetalhesId({ params }: { params: { id: string } }) {
   return (
