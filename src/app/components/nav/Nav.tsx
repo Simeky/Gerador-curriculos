@@ -1,9 +1,5 @@
 import Link from 'next/link';
-import {
-  FaHome,
-  FaList,
-  FaPlus,
-} from 'react-icons/fa';
+import { FaHome, FaPlus, FaList } from 'react-icons/fa';
 
 export function Nav() {
   return (

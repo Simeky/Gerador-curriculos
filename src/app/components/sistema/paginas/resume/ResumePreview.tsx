@@ -1,6 +1,12 @@
-import Image from "next/image";
-import { ResumeData } from "@/types/resume";
-import { FaGithub, FaLinkedin, FaEnvelope, FaPhone } from "react-icons/fa";
+import Image from 'next/image';
+import {
+  FaEnvelope,
+  FaGithub,
+  FaLinkedin,
+  FaPhone,
+} from 'react-icons/fa';
+
+import { ResumeData } from '@/types/resume';
 
 interface ResumePreviewProps {
   data: ResumeData;
@@ -87,7 +93,6 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         )}
       </section>
 
-      {/* Education */}
       <section>
         <h2 className="text-lg font-bold text-slate-900 uppercase tracking-wider mb-4 border-b-2 border-indigo-600 inline-block pb-1">
           Formação Acadêmica
@@ -107,7 +112,6 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         )}
       </section>
       
-      {/* Styles for printing */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
           body * {
