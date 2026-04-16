@@ -5,11 +5,13 @@ import {
   useState,
 } from 'react';
 
+import { Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { FaTrash } from 'react-icons/fa';
 import { toast } from 'sonner';
 
 import { Nav } from '@/app/components/nav/Nav';
+import { Button } from '@/app/components/ui/button';
+import { Card } from '@/app/components/ui/card';
 
 interface Curriculo {
   id: string;
@@ -65,17 +67,17 @@ export default function ListaCurriculos() {
         </div>
 
         {curriculos.length === 0 ? (
-          <div className="bg-white rounded-lg border border-slate-200 p-12 text-center">
+          <Card className="p-12 text-center">
             <p className="text-slate-600 text-lg mb-6">Nenhum currículo salvo ainda.</p>
-            <Link href="/curriculos/gerador" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-              Criar Primeiro Currículo
+            <Link href="/curriculos/gerador">
+              <Button>Criar Primeiro Currículo</Button>
             </Link>
-          </div>
+          </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {curriculos.map((curriculo) => (
-              <Link key={curriculo.id} href={`/curriculos/detalhes/${curriculo.id}`}>
-                <div className="bg-white rounded-lg shadow-sm border border-slate-200 hover:shadow-lg hover:border-indigo-300 transition-all p-6 cursor-pointer h-full">
+              <Link key={curriculo.id} href={`/curriculos/detalhes?id=${curriculo.id}`}>
+                <Card className="hover:shadow-lg hover:border-indigo-300 transition-all p-6 cursor-pointer h-full hover:scale-105">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold text-slate-900 mb-1">{curriculo.fullName}</h3>
@@ -88,7 +90,7 @@ export default function ListaCurriculos() {
                       }}
                       className="text-red-500 hover:text-red-700 transition-colors p-2"
                     >
-                      <FaTrash size={16} />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                   
@@ -99,7 +101,7 @@ export default function ListaCurriculos() {
                   <div className="text-xs text-slate-400">
                     Salvo em {formatDate(curriculo.timestamp)}
                   </div>
-                </div>
+                </Card>
               </Link>
             ))}
           </div>

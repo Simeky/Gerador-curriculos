@@ -80,8 +80,8 @@ export function PreviewCurriculo({ data }: PreviewCurriculoProps) {
         {data.experience && data.experience.length > 0 ? (
           data.experience.map((exp, index) => (
             <div key={index} className="mb-6">
-              <h3 className="font-semibold text-slate-900">{exp.position} at {exp.company}</h3>
-              <p className="text-slate-600 text-sm">{exp.startDate} - {exp.endDate || 'Present'}</p>
+              <h3 className="font-semibold text-slate-900">{exp.position} na {exp.company}</h3>
+              <p className="text-slate-600 text-sm">{exp.startDate} até {exp.endDate || 'Presente'}</p>
               <p className="text-slate-700 mt-2 whitespace-pre-line">{exp.description}</p>
             </div>
           ))
