@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { ResumeForm } from "@/app/components/resume/ResumeForm";
-import { ResumePreview } from "@/app/components/resume/ResumePreview";
-import { ResumeData } from "@/types/resume";
-import { Nav } from "@/app/components/nav/page";
+import { useState } from 'react';
 
-export default function Cadastro() {
+import { Nav } from '@/app/components/nav/Nav';
+import { ResumeData } from '@/types/resume';
+
+import { FormCurriculo } from './FormCurriculo';
+import { PreviewCurriculo } from './PreviewCurriculo';
+
+export default function Gerador() {
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
 
   const handlePrint = () => {
@@ -25,7 +27,7 @@ export default function Cadastro() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 print:hidden">
             <h2 className="text-2xl font-semibold mb-6">Seus Dados</h2>
-            <ResumeForm onDataChange={setResumeData} />
+            <FormCurriculo onDataChange={setResumeData} />
           </section>
 
           <section className="sticky top-8 print:static">
@@ -41,7 +43,7 @@ export default function Cadastro() {
               </div>
               {resumeData ? (
                 <div className="overflow-hidden bg-white h-full print:m-0">
-                  <ResumePreview data={resumeData} />
+                  <PreviewCurriculo data={resumeData} />
                 </div>
               ) : (
                 <div className="h-[600px] flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-200 rounded-lg m-6 p-12 text-center print:hidden">
