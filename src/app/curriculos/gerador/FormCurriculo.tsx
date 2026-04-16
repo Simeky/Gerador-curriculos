@@ -3,20 +3,22 @@
 import { useEffect } from 'react';
 
 import {
+  Briefcase,
+  FileText,
+  Mail,
+  Phone,
+  Plus,
+  Save,
+  Trash2,
+  User,
+} from 'lucide-react';
+import {
   useFieldArray,
   useForm,
 } from 'react-hook-form';
 import {
-  FaBriefcase,
-  FaEnvelope,
-  FaFileAlt,
   FaGithub,
   FaLinkedin,
-  FaPhone,
-  FaPlus,
-  FaSave,
-  FaTrash,
-  FaUser,
 } from 'react-icons/fa';
 import { toast } from 'sonner';
 
@@ -118,7 +120,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="fullName" className="flex items-center gap-2">
-              <FaUser className="text-slate-400" />
+              <User className="text-slate-400 w-4 h-4" />
               Nome Completo *
             </Label>
             <Input id="fullName" placeholder="Ex: João Silva" {...register("fullName")} />
@@ -127,7 +129,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
 
           <div className="space-y-2">
             <Label htmlFor="jobTitle" className="flex items-center gap-2">
-              <FaBriefcase className="text-slate-400" />
+              <Briefcase className="text-slate-400 w-4 h-4" />
               Cargo Pretendido *
             </Label>
             <Input id="jobTitle" placeholder="Ex: Desenvolvedor Front-end" {...register("jobTitle")} />
@@ -136,7 +138,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
 
           <div className="space-y-2">
             <Label htmlFor="email" className="flex items-center gap-2">
-              <FaEnvelope className="text-slate-400" />
+              <Mail className="text-slate-400 w-4 h-4" />
               E-mail *
             </Label>
             <Input id="email" type="email" placeholder="Ex: joao@email.com" {...register("email")} />
@@ -145,7 +147,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
 
           <div className="space-y-2 flex flex-col">
             <Label htmlFor="phone" className="flex items-center gap-2">
-              <FaPhone className="text-slate-400" />
+              <Phone className="text-slate-400 w-4 h-4" />
               Telefone *
             </Label>
             <InputMask 
@@ -162,7 +164,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
           
           <div className="space-y-2">
             <Label htmlFor="linkedin" className="flex items-center gap-2">
-              <FaLinkedin className="text-slate-400" />
+              <FaLinkedin className="text-slate-400 w-4 h-4" />
               LinkedIn URL
             </Label>
             <Input id="linkedin" type="url" placeholder="https://linkedin.com/in/..." {...register("linkedin")} />
@@ -171,7 +173,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
 
           <div className="space-y-2">
             <Label htmlFor="github" className="flex items-center gap-2">
-              <FaGithub className="text-slate-400" />
+              <FaGithub className="text-slate-400 w-4 h-4" />
               GitHub URL
             </Label>
             <Input id="github" type="url" placeholder="https://github.com/..." {...register("github")} />
@@ -184,7 +186,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
         <h3 className="text-lg font-medium text-slate-900 border-b pb-2">Resumo Profissional</h3>
         <div className="space-y-2">
           <Label htmlFor="summary" className="flex items-center gap-2">
-            <FaFileAlt className="text-slate-400" />
+            <FileText className="text-slate-400 w-4 h-4" />
             Sobre você *
           </Label>
           <Textarea 
@@ -203,8 +205,8 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
           <div key={field.id} className="border border-slate-200 rounded-lg p-4 space-y-4">
             <div className="flex justify-between items-center">
               <h4 className="font-medium">Experiência {index + 1}</h4>
-              <Button type="button" variant="outline" size="sm" onClick={() => removeExperience(index)}>
-                <FaTrash className="mr-2" /> Remover
+              <Button type="button" variant="ghost" size="sm" onClick={() => removeExperience(index)} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Trash2 className="mr-2 w-4 h-4" /> Remover
               </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -236,7 +238,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
           </div>
         ))}
         <Button type="button" variant="outline" onClick={() => appendExperience({ company: "", position: "", startDate: "", endDate: "", description: "" })}>
-          <FaPlus className="mr-2" /> Adicionar Experiência
+          <Plus className="mr-2 w-4 h-4" /> Adicionar Experiência
         </Button>
       </div>
 
@@ -246,8 +248,8 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
           <div key={field.id} className="border border-slate-200 rounded-lg p-4 space-y-4">
             <div className="flex justify-between items-center">
               <h4 className="font-medium">Formação {index + 1}</h4>
-              <Button type="button" variant="outline" size="sm" onClick={() => removeEducation(index)}>
-                <FaTrash className="mr-2" /> Remover
+              <Button type="button" variant="ghost" size="sm" onClick={() => removeEducation(index)} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Trash2 className="mr-2 w-4 h-4" /> Remover
               </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -270,7 +272,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
           </div>
         ))}
         <Button type="button" variant="outline" onClick={() => appendEducation({ institution: "", degree: "", year: "" })}>
-          <FaPlus className="mr-2" /> Adicionar Formação
+          <Plus className="mr-2 w-4 h-4" /> Adicionar Formação
         </Button>
       </div>
 
@@ -280,7 +282,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
           onClick={handleSaveLayout}
           className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
         >
-          <FaSave /> Salvar Layout
+          <Save className="w-4 h-4" /> Salvar Layout
         </Button>
       </div>
     </form>

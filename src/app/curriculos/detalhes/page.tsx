@@ -5,24 +5,28 @@ import {
   useState,
 } from 'react';
 
+import {
+  ArrowLeft,
+  Mail,
+  Phone,
+  Printer,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
-  FaArrowLeft,
-  FaEnvelope,
   FaGithub,
   FaLinkedin,
-  FaPhone,
-  FaPrint,
 } from 'react-icons/fa';
 
 import { Nav } from '@/app/components/nav/Nav';
+import { Button } from '@/app/components/ui/button';
+import { Card } from '@/app/components/ui/card';
 import { ResumeData } from '@/types/resume';
 
 export default function DetalhesCurriculo() {
-  const params = useParams();
-  const id = params.id as string;
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id') as string;
   
   const [curriculo, setCurriculo] = useState<ResumeData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,8 +63,8 @@ export default function DetalhesCurriculo() {
         <div className="max-w-7xl mx-auto p-4 md:p-8">
           <p className="text-center text-slate-600 mb-6">Currículo não encontrado.</p>
           <div className="text-center">
-            <Link href="/curriculos/lista" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-              Voltar para Lista
+            <Link href="/curriculos/lista">
+              <Button>Voltar para Lista</Button>
             </Link>
           </div>
         </div>
@@ -77,17 +81,18 @@ export default function DetalhesCurriculo() {
       <div className="max-w-5xl mx-auto p-4 md:p-8">
         <div className="mb-6 flex justify-between items-center print:hidden">
           <Link href="/curriculos/lista" className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-semibold transition-colors">
-            <FaArrowLeft /> Voltar
+            <ArrowLeft className="w-4 h-4" /> Voltar
           </Link>
-          <button
+          <Button
             onClick={handlePrint}
-            className="flex items-center gap-2 bg-slate-900 text-white px-6 py-2 rounded-lg font-semibold hover:bg-slate-800 transition-colors"
+            variant="default"
+            className="flex items-center gap-2"
           >
-            <FaPrint /> Imprimir/PDF
-          </button>
+            <Printer className="w-4 h-4" /> Imprimir/PDF
+          </Button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8 md:p-10 print:shadow-none print:border-none">
+        <Card className="print:shadow-none print:border-none p-8 md:p-10">
           <header className="flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-slate-200 pb-6 mb-6">
             <div className="w-24 h-24 relative rounded-full overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
               <Image 
@@ -105,25 +110,25 @@ export default function DetalhesCurriculo() {
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 text-sm text-slate-600">
                 {email && (
                   <div className="flex items-center gap-2">
-                    <FaEnvelope className="text-slate-400" />
+                    <Mail className="w-4 h-4 text-slate-400" />
                     <span>{email}</span>
                   </div>
                 )}
                 {phone && (
                   <div className="flex items-center gap-2">
-                    <FaPhone className="text-slate-400" />
+                    <Phone className="w-4 h-4 text-slate-400" />
                     <span>{phone}</span>
                   </div>
                 )}
                 {linkedin && (
                   <div className="flex items-center gap-2">
-                    <FaLinkedin className="text-slate-400" />
+                    <FaLinkedin className="w-4 h-4 text-slate-400" />
                     <a href={linkedin} target="_blank" rel="noreferrer" className="hover:text-indigo-600">{linkedin.replace('https://', '')}</a>
                   </div>
                 )}
                 {github && (
                   <div className="flex items-center gap-2">
-                    <FaGithub className="text-slate-400" />
+                    <FaGithub className="w-4 h-4 text-slate-400" />
                     <a href={github} target="_blank" rel="noreferrer" className="hover:text-indigo-600">{github.replace('https://', '')}</a>
                   </div>
                 )}
@@ -149,8 +154,8 @@ export default function DetalhesCurriculo() {
             {experience && experience.length > 0 ? (
               experience.map((exp, index) => (
                 <div key={index} className="mb-6">
-                  <h3 className="font-semibold text-slate-900">{exp.position} at {exp.company}</h3>
-                  <p className="text-slate-600 text-sm">{exp.startDate} - {exp.endDate || 'Presente'}</p>
+                  <h3 className="font-semibold text-slate-900">{exp.position} na {exp.company}</h3>
+                  <p className="text-slate-600 text-sm">{exp.startDate} até {exp.endDate || 'Presente'}</p>
                   <p className="text-slate-700 mt-2 whitespace-pre-line">{exp.description}</p>
                 </div>
               ))
@@ -179,7 +184,7 @@ export default function DetalhesCurriculo() {
               </div>
             )}
           </section>
-        </div>
+        </Card>
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
@@ -187,10 +192,10 @@ export default function DetalhesCurriculo() {
           body * {
             visibility: hidden;
           }
-          .bg-white.rounded-lg.shadow-sm, .bg-white.rounded-lg.shadow-sm * {
+          .rounded-lg.border.shadow-sm, .rounded-lg.border.shadow-sm * {
             visibility: visible;
           }
-          .bg-white.rounded-lg.shadow-sm {
+          .rounded-lg.border.shadow-sm {
             position: absolute;
             left: 0;
             top: 0;
