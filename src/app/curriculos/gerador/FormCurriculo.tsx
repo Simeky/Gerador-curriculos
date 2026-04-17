@@ -130,7 +130,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
           <div className="space-y-2">
             <Label htmlFor="jobTitle" className="flex items-center gap-2">
               <Briefcase className="text-slate-400 w-4 h-4" />
-              Cargo Pretendido *
+              Cargo ou Situação Atual *
             </Label>
             <Input id="jobTitle" placeholder="Ex: Desenvolvedor Front-end" {...register("jobTitle")} />
             {errors.jobTitle && <p className="text-sm text-red-500">{errors.jobTitle.message}</p>}
