@@ -32,13 +32,13 @@ export default function DetalhesCurriculo() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const curriculosSalvos = JSON.parse(localStorage.getItem('curriculosSalvos') || '[]');
-    const encontrado = curriculosSalvos.find((c: any) => c.id === id);
-    
-    if (encontrado) {
-      setCurriculo(encontrado);
-    }
-    setLoading(false);
+    requestAnimationFrame(() => {
+      const curriculosSalvos = JSON.parse(localStorage.getItem('curriculosSalvos') || '[]');
+      const encontrado = curriculosSalvos.find((c: { id: string }) => c.id === id);
+      
+      if (encontrado) setCurriculo(encontrado);
+      setLoading(false);
+    });
   }, [id]);
 
   const handlePrint = () => {
@@ -94,7 +94,7 @@ export default function DetalhesCurriculo() {
 
         <Card className="print:shadow-none print:border-none p-8 md:p-10">
           <header className="flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-slate-200 pb-6 mb-6">
-            <div className="w-24 h-24 relative rounded-full overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
+            <div className="w-24 h-24 relative rounded-full overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
               <Image 
                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName || 'Usuário')}&background=0D8ABC&color=fff&size=256`} 
                 alt="Foto de perfil" 
@@ -141,7 +141,7 @@ export default function DetalhesCurriculo() {
               <h2 className="text-lg font-bold text-slate-900 uppercase tracking-wider mb-3 border-b-2 border-indigo-600 inline-block pb-1">
                 Resumo Profissional
               </h2>
-              <p className="text-slate-700 leading-relaxed whitespace-pre-line break-words">
+              <p className="text-slate-700 leading-relaxed whitespace-pre-line wrap-break-word">
                 {summary}
               </p>
             </section>
