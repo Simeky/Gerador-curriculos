@@ -6,13 +6,13 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-import { Nav } from '@/app/components/nav/Nav';
+import Nav from '@/app/components/nav/page';
 import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <div className="min-h-screen bg-linear-to-b from-slate-900 to-slate-800">
       <Nav />
       
       <section className="max-w-4xl mx-auto px-4 py-20 text-center text-white">
@@ -78,7 +78,7 @@ export default function Home() {
       </section>
 
       <section className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <Card className="bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-lg p-12 text-white border-0">
+        <Card className="bg-linear-to-r from-indigo-600 to-indigo-700 rounded-lg p-12 text-white border-0">
           <h2 className="text-3xl font-bold mb-6">Pronto para começar?</h2>
           <p className="text-lg mb-8 text-indigo-100">
             Crie seu primeiro currículo agora e comece a se destacar no mercado.

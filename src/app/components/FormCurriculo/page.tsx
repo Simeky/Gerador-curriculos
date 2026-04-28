@@ -29,7 +29,7 @@ import { Textarea } from '@/app/components/ui/textarea';
 import {
   ResumeData,
   resumeSchema,
-} from '@/types/resume';
+} from '@/app/sistema/curriculos/gerador/validacao';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { InputMask } from '@react-input/mask';
 
@@ -38,7 +38,7 @@ interface FormCurriculoProps {
   onSave?: (data: ResumeData) => void;
 }
 
-export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
+export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
   const {
     register,
     watch,
@@ -49,7 +49,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
     resolver: yupResolver(resumeSchema as never),
     mode: "onChange",
     defaultValues: {
-      fullName: "",
+      fullName: " ",
       jobTitle: "",
       email: "",
       phone: "",
@@ -83,7 +83,78 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
 
   const handleSaveLayout = () => {
     if (!isValid) {
-      toast.error('Por favor, preencha todos os campos obrigatórios corretamente');
+      // Coletar todos os erros do formulário
+      const erros: string[] = [];
+      const fields = watch();
+      
+      if (fields.fullName === '' || fields.fullName === undefined) {
+        erros.push('Nome completo');
+      }
+      if (fields.jobTitle === '' || fields.jobTitle === undefined) {
+        erros.push('Cargo pretendido');
+      }
+      if (fields.email === '' || fields.email === undefined) {
+        erros.push('E-mail');
+      }
+      if (fields.phone === '' || fields.phone === undefined) {
+        erros.push('Telefone');
+      }
+      if (fields.summary === '' || fields.summary === undefined) {
+        erros.push('Resumo profissional');
+      } else if (typeof fields.summary === 'string' && fields.summary.length < 20) {
+        erros.push('Resumo deve ter pelo menos 20 caracteres');
+      }
+
+      // Verificar erros específicos dos campos
+      if (errors.fullName?.message) erros.push(`Nome: ${errors.fullName.message}`);
+      if (errors.jobTitle?.message) erros.push(`Cargo: ${errors.jobTitle.message}`);
+      if (errors.email?.message) erros.push(`E-mail: ${errors.email.message}`);
+      if (errors.phone?.message) erros.push(`Telefone: ${errors.phone.message}`);
+      if (errors.linkedin?.message) erros.push(`LinkedIn: ${errors.linkedin.message}`);
+      if (errors.github?.message) erros.push(`GitHub: ${errors.github.message}`);
+      if (errors.summary?.message) erros.push(`Resumo: ${errors.summary.message}`);
+
+      // Verificar erros em experiências
+      if (experienceFields.length > 0) {
+        experienceFields.forEach((_, index) => {
+          if (errors.experience?.[index]?.company) {
+            erros.push(`Experiência ${index + 1} - Empresa: ${errors.experience[index].company.message}`);
+          }
+          if (errors.experience?.[index]?.position) {
+            erros.push(`Experiência ${index + 1} - Cargo: ${errors.experience[index].position.message}`);
+          }
+          if (errors.experience?.[index]?.startDate) {
+            erros.push(`Experiência ${index + 1} - Data início: ${errors.experience[index].startDate.message}`);
+          }
+          if (errors.experience?.[index]?.description) {
+            erros.push(`Experiência ${index + 1} - Descrição: ${errors.experience[index].description.message}`);
+          }
+        });
+      }
+
+      // Verificar erros em formações
+      if (educationFields.length > 0) {
+        educationFields.forEach((_, index) => {
+          if (errors.education?.[index]?.institution) {
+            erros.push(`Formação ${index + 1} - Instituição: ${errors.education[index].institution.message}`);
+          }
+          if (errors.education?.[index]?.degree) {
+            erros.push(`Formação ${index + 1} - Curso: ${errors.education[index].degree.message}`);
+          }
+          if (errors.education?.[index]?.year) {
+            erros.push(`Formação ${index + 1} - Ano: ${errors.education[index].year.message}`);
+          }
+        });
+      }
+
+      // Mostrar toast com os erros específicos
+      if (erros.length > 0) {
+        toast.error(`Preencha os campos obrigatórios: ${erros.join(', ')}`, {
+          duration: 5000,
+        });
+      } else {
+        toast.error('Por favor, preencha todos os campos obrigatórios corretamente');
+      }
       return;
     }
 
@@ -192,7 +263,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
           <Textarea 
             id="summary" 
             placeholder="Descreva suas habilidades, objetivos e um breve resumo da sua carreira..." 
-            className="min-h-[120px]"
+            className="min-h-30"
             {...register("summary")} 
           />
           {errors.summary && <p className="text-sm text-red-500">{errors.summary.message}</p>}
@@ -232,7 +303,7 @@ export function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
             </div>
             <div className="space-y-2">
               <Label>Descrição *</Label>
-              <Textarea {...register(`experience.${index}.description`)} className="min-h-[80px]" />
+              <Textarea {...register(`experience.${index}.description`)} className="min-h-20" />
               {errors.experience?.[index]?.description && <p className="text-sm text-red-500">{errors.experience[index].description.message}</p>}
             </div>
           </div>

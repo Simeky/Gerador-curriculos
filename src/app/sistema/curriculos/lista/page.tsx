@@ -9,7 +9,7 @@ import { Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
-import { Nav } from '@/app/components/nav/Nav';
+import Nav from '@/app/components/nav/page';
 import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
 
@@ -26,9 +26,11 @@ export default function ListaCurriculos() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const curriculosSalvos = JSON.parse(localStorage.getItem('curriculosSalvos') || '[]');
-    setCurriculos(curriculosSalvos);
-    setLoading(false);
+    requestAnimationFrame(() => {
+      const curriculosSalvos = JSON.parse(localStorage.getItem('curriculosSalvos') || '[]');
+      setCurriculos(curriculosSalvos);
+      setLoading(false);
+    });
   }, []);
 
   const handleDelete = (id: string) => {
@@ -69,14 +71,14 @@ export default function ListaCurriculos() {
         {curriculos.length === 0 ? (
           <Card className="p-12 text-center">
             <p className="text-slate-600 text-lg mb-6">Nenhum currículo salvo ainda.</p>
-            <Link href="/curriculos/gerador">
+            <Link href="/sistema/curriculos/gerador">
               <Button>Criar Primeiro Currículo</Button>
             </Link>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {curriculos.map((curriculo) => (
-              <Link key={curriculo.id} href={`/curriculos/detalhes?id=${curriculo.id}`}>
+              <Link key={curriculo.id} href={`/sistema/curriculos/detalhes?id=${curriculo.id}`}>
                 <Card className="hover:shadow-lg hover:border-indigo-300 transition-all p-6 cursor-pointer h-full hover:scale-105">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">

@@ -5,7 +5,7 @@ import {
   FaPlus,
 } from 'react-icons/fa';
 
-export function Nav() {
+export default function Nav() {
   return (
     <nav className="bg-slate-900 text-white p-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
