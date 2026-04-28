@@ -9,12 +9,12 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/curriculos/detalhes',
+        source: '/curriculos/visualizar/:id',
         destination: '/sistema/curriculos/detalhes',
         permanent: true,
       },
       {
-        source: '/curriculos/lista',
+        source: '/curriculos/visualizar',
         destination: '/sistema/curriculos/lista',
         permanent: true,
       },

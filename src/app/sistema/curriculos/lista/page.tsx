@@ -78,7 +78,7 @@ export default function ListaCurriculos() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {curriculos.map((curriculo) => (
-              <Link key={curriculo.id} href={`/sistema/curriculos/detalhes?id=${curriculo.id}`}>
+              <Link key={curriculo.id} href={`/sistema/curriculos/visualizar/?id=${curriculo.id}`}>
                 <Card className="hover:shadow-lg hover:border-indigo-300 transition-all p-6 cursor-pointer h-full hover:scale-105">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
