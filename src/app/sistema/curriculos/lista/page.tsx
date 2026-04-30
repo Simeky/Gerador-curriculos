@@ -9,9 +9,9 @@ import { Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
-import Nav from '@/app/components/nav/page';
-import { Button } from '@/app/components/ui/button';
-import { Card } from '@/app/components/ui/card';
+import Nav from '@/components/nav/page';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 interface Curriculo {
   id: string;

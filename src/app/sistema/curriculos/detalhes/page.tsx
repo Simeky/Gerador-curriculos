@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Suspense,
   useEffect,
   useState,
 } from 'react';
@@ -19,12 +20,13 @@ import {
   FaLinkedin,
 } from 'react-icons/fa';
 
-import Nav from '@/app/components/nav/page';
-import { Button } from '@/app/components/ui/button';
-import { Card } from '@/app/components/ui/card';
 import { ResumeData } from '@/app/sistema/curriculos/gerador/validacao';
+import Nav from '@/components/nav/page';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
-export default function DetalhesCurriculo() {
+function DetalhesCurriculoContent() {
+  "use client";
   const searchParams = useSearchParams();
   const id = searchParams.get('id') as string;
   
@@ -206,5 +208,13 @@ export default function DetalhesCurriculo() {
         }
       `}} />
     </div>
+  );
+}
+
+export default function DetalhesCurriculoPage() {
+  return (
+    <Suspense>
+      <DetalhesCurriculoContent />
+    </Suspense>
   );
 }

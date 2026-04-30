@@ -4,12 +4,12 @@ import { useState } from 'react';
 
 import { Printer } from 'lucide-react';
 
-import FormCurriculo from '@/app/components/FormCurriculo/page';
-import Nav from '@/app/components/nav/page';
-import PreviewCurriculo from '@/app/components/PreviewCurriculo/page';
-import { Button } from '@/app/components/ui/button';
-import { Card } from '@/app/components/ui/card';
 import { ResumeData } from '@/app/sistema/curriculos/gerador/validacao';
+import FormCurriculo from '@/components/FormCurriculo/page';
+import Nav from '@/components/nav/page';
+import PreviewCurriculo from '@/components/PreviewCurriculo/page';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function Gerador() {
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);

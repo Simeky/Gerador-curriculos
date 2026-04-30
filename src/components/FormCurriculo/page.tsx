@@ -22,14 +22,14 @@ import {
 } from 'react-icons/fa';
 import { toast } from 'sonner';
 
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Textarea } from '@/app/components/ui/textarea';
 import {
   ResumeData,
   resumeSchema,
 } from '@/app/sistema/curriculos/gerador/validacao';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { InputMask } from '@react-input/mask';
 
