@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Suspense,
   useEffect,
   useState,
 } from 'react';
@@ -19,12 +20,13 @@ import {
   FaLinkedin,
 } from 'react-icons/fa';
 
-import { Nav } from '@/app/components/nav/Nav';
-import { Button } from '@/app/components/ui/button';
-import { Card } from '@/app/components/ui/card';
-import { ResumeData } from '@/types/resume';
+import { ResumeData } from '@/app/sistema/curriculos/gerador/validacao';
+import Nav from '@/components/nav/page';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
-export default function DetalhesCurriculo() {
+function DetalhesCurriculoContent() {
+  "use client";
   const searchParams = useSearchParams();
   const id = searchParams.get('id') as string;
   
@@ -63,7 +65,7 @@ export default function DetalhesCurriculo() {
         <div className="max-w-7xl mx-auto p-4 md:p-8">
           <p className="text-center text-slate-600 mb-6">Currículo não encontrado.</p>
           <div className="text-center">
-            <Link href="/curriculos/lista">
+            <Link href="/sistema/curriculos/lista">
               <Button>Voltar para Lista</Button>
             </Link>
           </div>
@@ -80,7 +82,7 @@ export default function DetalhesCurriculo() {
       
       <div className="max-w-5xl mx-auto p-4 md:p-8">
         <div className="mb-6 flex justify-between items-center print:hidden">
-          <Link href="/curriculos/lista" className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-semibold transition-colors">
+          <Link href="/sistema/curriculos/lista" className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-semibold transition-colors">
             <ArrowLeft className="w-4 h-4" /> Voltar
           </Link>
           <Button
@@ -202,11 +204,17 @@ export default function DetalhesCurriculo() {
             width: 100%;
             padding: 0;
             margin: 0;
-            border: none;
-            box-shadow: none;
           }
         }
       `}} />
     </div>
+  );
+}
+
+export default function DetalhesCurriculoPage() {
+  return (
+    <Suspense>
+      <DetalhesCurriculoContent />
+    </Suspense>
   );
 }

@@ -4,13 +4,12 @@ import { useState } from 'react';
 
 import { Printer } from 'lucide-react';
 
-import { Nav } from '@/app/components/nav/Nav';
-import { Button } from '@/app/components/ui/button';
-import { Card } from '@/app/components/ui/card';
-import { ResumeData } from '@/types/resume';
-
-import { FormCurriculo } from './FormCurriculo';
-import { PreviewCurriculo } from './PreviewCurriculo';
+import { ResumeData } from '@/app/sistema/curriculos/gerador/validacao';
+import FormCurriculo from '@/components/FormCurriculo/page';
+import Nav from '@/components/nav/page';
+import PreviewCurriculo from '@/components/PreviewCurriculo/page';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function Gerador() {
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
@@ -35,7 +34,7 @@ export default function Gerador() {
           </Card>
 
           <section className="sticky top-8 print:static">
-            <Card className="p-0 md:p-0 min-h-[800px] print:border-none print:shadow-none">
+            <Card className="p-0 md:p-0 min-h-200 print:border-none print:shadow-none">
               <div className="p-6 md:p-8 pb-0 flex justify-between items-center print:hidden border-b border-slate-100 mb-6">
                 <h2 className="text-2xl font-semibold">Visualização</h2>
                 <Button
@@ -52,7 +51,7 @@ export default function Gerador() {
                   <PreviewCurriculo data={resumeData} />
                 </div>
               ) : (
-                <div className="h-[600px] flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-200 rounded-lg m-6 p-12 text-center print:hidden">
+                <div className="h-150 flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-200 rounded-lg m-6 p-12 text-center print:hidden">
                   Preencha o formulário ao lado para visualizar seu currículo aqui.
                 </div>
               )}

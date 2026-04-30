@@ -1,7 +1,11 @@
 import Link from 'next/link';
-import { FaHome, FaPlus, FaList } from 'react-icons/fa';
+import {
+  FaHome,
+  FaList,
+  FaPlus,
+} from 'react-icons/fa';
 
-export function Nav() {
+export default function Nav() {
   return (
     <nav className="bg-slate-900 text-white p-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -17,7 +21,7 @@ export function Nav() {
             <FaPlus />
             <span>Gerador</span>
           </Link>
-          <Link href="/curriculos/lista" className="flex items-center space-x-2 hover:text-slate-300 transition-colors">
+          <Link href="/curriculos/visualizar" className="flex items-center space-x-2 hover:text-slate-300 transition-colors">
             <FaList />
             <span>Lista de Currículos</span>
           </Link>

@@ -8,19 +8,19 @@ import {
   FaPhone,
 } from 'react-icons/fa';
 
-import { ResumeData } from '@/types/resume';
+import { ResumeData } from '@/app/sistema/curriculos/gerador/validacao';
 
 interface PreviewCurriculoProps {
   data: ResumeData;
 }
 
-export function PreviewCurriculo({ data }: PreviewCurriculoProps) {
+export default function PreviewCurriculo({ data }: PreviewCurriculoProps) {
   const { fullName, jobTitle, email, phone, github, linkedin, summary } = data;
 
   return (
     <div className="bg-white p-8 md:p-10 font-sans text-slate-800" id="resume-preview">
       <header className="flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-slate-200 pb-6 mb-6">
-        <div className="w-24 h-24 relative rounded-full overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
+        <div className="w-24 h-24 relative rounded-full overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
           <Image 
             src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName || 'Usuário')}&background=0D8ABC&color=fff&size=256`} 
             alt="Foto de perfil" 
@@ -67,7 +67,7 @@ export function PreviewCurriculo({ data }: PreviewCurriculoProps) {
           <h2 className="text-lg font-bold text-slate-900 uppercase tracking-wider mb-3 border-b-2 border-indigo-600 inline-block pb-1">
             Resumo Profissional
           </h2>
-          <p className="text-slate-700 leading-relaxed whitespace-pre-line break-words">
+          <p className="text-slate-700 leading-relaxed whitespace-pre-line wrap-break-word">
             {summary}
           </p>
         </section>
