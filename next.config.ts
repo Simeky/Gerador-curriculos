@@ -1,22 +1,19 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  async redirects() {
+  async rewrites() {
     return [
       {
         source: '/curriculos/gerador',
         destination: '/sistema/curriculos/gerador',
-        permanent: true,
       },
       {
         source: '/curriculos/visualizar/:id',
-        destination: '/sistema/curriculos/detalhes',
-        permanent: true,
+        destination: '/sistema/curriculos/detalhes?id=:id',
       },
       {
         source: '/curriculos/visualizar',
         destination: '/sistema/curriculos/lista',
-        permanent: true,
       },
     ];
   },

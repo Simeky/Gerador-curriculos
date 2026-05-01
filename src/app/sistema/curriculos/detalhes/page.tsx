@@ -14,7 +14,10 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import {
+  usePathname,
+  useSearchParams,
+} from 'next/navigation';
 import {
   FaGithub,
   FaLinkedin,
@@ -26,9 +29,12 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
 function DetalhesCurriculoContent() {
-  "use client";
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const id = searchParams.get('id') as string;
+  const id =
+    pathname.match(/^\/curriculos\/visualizar\/([^/]+)$/)?.[1] ??
+    searchParams.get('id') ??
+    '';
   
   const [curriculo, setCurriculo] = useState<ResumeData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,8 +42,9 @@ function DetalhesCurriculoContent() {
   useEffect(() => {
     requestAnimationFrame(() => {
       const curriculosSalvos = JSON.parse(localStorage.getItem('curriculosSalvos') || '[]');
-      const encontrado = curriculosSalvos.find((c: { id: string }) => c.id === id);
       
+      const encontrado = curriculosSalvos.find((c: { id: string | number }) => String(c.id) === id);
+
       if (encontrado) setCurriculo(encontrado);
       setLoading(false);
     });
@@ -65,7 +72,7 @@ function DetalhesCurriculoContent() {
         <div className="max-w-7xl mx-auto p-4 md:p-8">
           <p className="text-center text-slate-600 mb-6">Currículo não encontrado.</p>
           <div className="text-center">
-            <Link href="/sistema/curriculos/lista">
+            <Link href="/curriculos/visualizar">
               <Button>Voltar para Lista</Button>
             </Link>
           </div>
@@ -82,7 +89,7 @@ function DetalhesCurriculoContent() {
       
       <div className="max-w-5xl mx-auto p-4 md:p-8">
         <div className="mb-6 flex justify-between items-center print:hidden">
-          <Link href="/sistema/curriculos/lista" className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-semibold transition-colors">
+          <Link href="/curriculos/visualizar" className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-semibold transition-colors">
             <ArrowLeft className="w-4 h-4" /> Voltar
           </Link>
           <Button
@@ -94,7 +101,7 @@ function DetalhesCurriculoContent() {
           </Button>
         </div>
 
-        <Card className="print:shadow-none print:border-none p-8 md:p-10">
+        <Card id="resume-container" className="print:shadow-none print:border-none p-8 md:p-10">
           <header className="flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-slate-200 pb-6 mb-6">
             <div className="w-24 h-24 relative rounded-full overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
               <Image 
@@ -194,10 +201,10 @@ function DetalhesCurriculoContent() {
           body * {
             visibility: hidden;
           }
-          .rounded-lg.border.shadow-sm, .rounded-lg.border.shadow-sm * {
+          #resume-container, #resume-container * {
             visibility: visible;
           }
-          .rounded-lg.border.shadow-sm {
+          #resume-container {
             position: absolute;
             left: 0;
             top: 0;

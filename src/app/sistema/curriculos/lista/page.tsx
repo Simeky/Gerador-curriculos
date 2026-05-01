@@ -71,40 +71,35 @@ export default function ListaCurriculos() {
         {curriculos.length === 0 ? (
           <Card className="p-12 text-center">
             <p className="text-slate-600 text-lg mb-6">Nenhum currículo salvo ainda.</p>
-            <Link href="/sistema/curriculos/gerador">
+            <Link href="/curriculos/gerador">
               <Button>Criar Primeiro Currículo</Button>
             </Link>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {curriculos.map((curriculo) => (
-              <Link key={curriculo.id} href={`/sistema/curriculos/visualizar/?id=${curriculo.id}`}>
-                <Card className="hover:shadow-lg hover:border-indigo-300 transition-all p-6 cursor-pointer h-full hover:scale-105">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-slate-900 mb-1">{curriculo.fullName}</h3>
-                      <p className="text-indigo-600 font-medium text-sm">{curriculo.jobTitle}</p>
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleDelete(curriculo.id);
-                      }}
-                      className="text-red-500 hover:text-red-700 transition-colors p-2"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+              <Card key={curriculo.id} className="relative group hover:shadow-lg hover:border-indigo-300 transition-all p-6 h-full">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-slate-900 mb-1">{curriculo.fullName}</h3>
+                    <p className="text-indigo-600 font-medium text-sm">{curriculo.jobTitle}</p>
                   </div>
-                  
-                  <p className="text-slate-600 text-sm line-clamp-3 mb-4">
-                    {curriculo.summary}
-                  </p>
-                  
-                  <div className="text-xs text-slate-400">
-                    Salvo em {formatDate(curriculo.timestamp)}
-                  </div>
-                </Card>
-              </Link>
+                  <button
+                    onClick={() => handleDelete(curriculo.id)}
+                    className="text-red-500 hover:text-red-700 transition-colors p-2 relative z-20"
+                    aria-label={`Deletar currículo de ${curriculo.fullName}`}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+                <p className="text-slate-600 text-sm line-clamp-3 mb-4">
+                  {curriculo.summary}
+                </p>
+                <div className="text-xs text-slate-400">
+                  Salvo em {formatDate(curriculo.timestamp)}
+                </div>
+                <Link href={`/curriculos/visualizar/${curriculo.id}`} className="absolute inset-0 z-10 group-hover:scale-105 transition-transform" aria-label={`Visualizar currículo de ${curriculo.fullName}`} />
+              </Card>
             ))}
           </div>
         )}
