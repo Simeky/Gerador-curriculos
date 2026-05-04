@@ -31,7 +31,7 @@ export default function PreviewCurriculo({ data }: PreviewCurriculoProps) {
         
         <div className="flex-1 text-center md:text-left">
           <h1 className="text-3xl font-bold text-slate-900 mb-1">{fullName || "Seu Nome Completo"}</h1>
-          <p className="text-xl text-indigo-600 font-medium mb-4">{jobTitle || "Cargo ou situação atual"}</p>
+          <p className="text-xl text-indigo-600 font-medium mb-4">{jobTitle || "Cargo Desejado"}</p>
           
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 text-sm text-slate-600">
             {email && (
