@@ -40,14 +40,32 @@ function DetalhesCurriculoContent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    requestAnimationFrame(() => {
-      const curriculosSalvos = JSON.parse(localStorage.getItem('curriculosSalvos') || '[]');
-      
-      const encontrado = curriculosSalvos.find((c: { id: string | number }) => String(c.id) === id);
+    const fetchCurriculo = async () => {
+      if (!id) {
+        setLoading(false);
+        return;
+      }
 
-      if (encontrado) setCurriculo(encontrado);
-      setLoading(false);
-    });
+      try {
+        const response = await fetch(`/api/curriculo?id=${encodeURIComponent(id)}`);
+        const data = await response.json();
+
+        if (!response.ok || !data.sucesso) {
+          console.error('Currículo não encontrado ou erro:', data);
+          setCurriculo(null);
+          return;
+        }
+
+        setCurriculo(data.curriculo);
+      } catch (error) {
+        console.error('Erro ao buscar currículo:', error);
+        setCurriculo(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCurriculo();
   }, [id]);
 
   const handlePrint = () => {

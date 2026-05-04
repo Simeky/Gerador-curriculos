@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -65,16 +66,24 @@ export async function cadastrarCurriculo(curriculo: Curriculo) {
   return docRef.id;
 }
 
+const normalizeCurriculo = (item: any) => {
+  const data = item.data();
+  const createdAt = data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt || null;
+
+  return {
+    id: item.id,
+    ...data,
+    createdAt,
+  } as Curriculo;
+};
+
 export async function listarCurriculos() {
   const q = query(
     collection(db, COLLECTION_NAME),
     orderBy("fullName", "asc")
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((item) => ({
-    id: item.id,
-    ...item.data(),
-  })) as Curriculo[];
+  return snapshot.docs.map(normalizeCurriculo) as Curriculo[];
 }
 
 export async function pesquisarCurriculosPorNome(nome: string) {
@@ -84,10 +93,25 @@ export async function pesquisarCurriculosPorNome(nome: string) {
     where("fullName", "<=", nome + "\uf8ff")
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((item) => ({
-    id: item.id,
-    ...item.data(),
-  })) as Curriculo[];
+  return snapshot.docs.map(normalizeCurriculo) as Curriculo[];
+}
+
+export async function buscarCurriculoPorId(id: string) {
+  const docRef = doc(db, COLLECTION_NAME, id);
+  const snapshot = await getDoc(docRef);
+
+  if (!snapshot.exists()) {
+    return null;
+  }
+
+  const data = snapshot.data();
+  const createdAt = data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt || null;
+
+  return {
+    id: snapshot.id,
+    ...data,
+    createdAt,
+  } as Curriculo;
 }
 
 export async function atualizarCurriculo(id: string, curriculo: Omit<Curriculo, "id">) {

@@ -26,22 +26,53 @@ export default function ListaCurriculos() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    requestAnimationFrame(() => {
-      const curriculosSalvos = JSON.parse(localStorage.getItem('curriculosSalvos') || '[]');
-      setCurriculos(curriculosSalvos);
-      setLoading(false);
-    });
+    const fetchCurriculos = async () => {
+      try {
+        const response = await fetch('/api/curriculo');
+        const data = await response.json();
+
+        if (!response.ok || !data.sucesso) {
+          throw new Error(data.erro || 'Erro ao carregar currículos');
+        }
+
+        const curriculosProcessados = data.curriculos.map((curriculo: any) => ({
+          ...curriculo,
+          timestamp: curriculo.createdAt || curriculo.timestamp || '',
+        }));
+
+        setCurriculos(curriculosProcessados);
+      } catch (error) {
+        console.error('Erro ao carregar currículos:', error);
+        toast.error('Não foi possível carregar os currículos.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCurriculos();
   }, []);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm('Tem certeza que deseja deletar este currículo?');
     if (!confirmDelete) return;
 
-    const curriculosSalvos = JSON.parse(localStorage.getItem('curriculosSalvos') || '[]');
-    const atualizado = curriculosSalvos.filter((c: Curriculo) => c.id !== id);
-    localStorage.setItem('curriculosSalvos', JSON.stringify(atualizado));
-    setCurriculos(atualizado);
-    toast.success('Currículo deletado com sucesso');
+    try {
+      const response = await fetch(`/api/curriculo?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.sucesso) {
+        throw new Error(result.erro || 'Erro ao excluir currículo');
+      }
+
+      const atualizado = curriculos.filter((c: Curriculo) => c.id !== id);
+      setCurriculos(atualizado);
+      toast.success('Currículo deletado com sucesso');
+    } catch (error) {
+      console.error('Erro ao excluir currículo:', error);
+      toast.error('Não foi possível excluir o currículo.');
+    }
   };
 
   const formatDate = (timestamp: string) => {
