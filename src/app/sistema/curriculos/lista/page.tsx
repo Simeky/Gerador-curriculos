@@ -18,7 +18,7 @@ interface Curriculo {
   fullName: string;
   jobTitle: string;
   summary: string;
-  timestamp: string;
+  createdAt: string;
 }
 
 export default function ListaCurriculos() {
@@ -35,9 +35,9 @@ export default function ListaCurriculos() {
           throw new Error(data.erro || 'Erro ao carregar currículos');
         }
 
-        const curriculosProcessados = data.curriculos.map((curriculo: any) => ({
+        const curriculosProcessados = data.curriculos.map((curriculo: Curriculo) => ({
           ...curriculo,
-          timestamp: curriculo.createdAt || curriculo.timestamp || '',
+          createdAt: curriculo.createdAt || curriculo.createdAt || '',
         }));
 
         setCurriculos(curriculosProcessados);
@@ -75,8 +75,8 @@ export default function ListaCurriculos() {
     }
   };
 
-  const formatDate = (timestamp: string) => {
-    return new Date(timestamp).toLocaleDateString('pt-BR');
+  const formatDate = (createdAt: string) => {
+    return new Date(createdAt).toLocaleDateString('pt-BR');
   };
 
   if (loading) {
@@ -127,7 +127,7 @@ export default function ListaCurriculos() {
                   {curriculo.summary}
                 </p>
                 <div className="text-xs text-slate-400">
-                  Salvo em {formatDate(curriculo.timestamp)}
+                  Salvo em {formatDate(curriculo.createdAt)}
                 </div>
                 <Link href={`/curriculos/visualizar/${curriculo.id}`} className="absolute inset-0 z-10 group-hover:scale-105 transition-transform" aria-label={`Visualizar currículo de ${curriculo.fullName}`} />
               </Card>

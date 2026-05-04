@@ -5,12 +5,12 @@ import {
 
 import {
   atualizarCurriculo,
+  buscarCurriculoPorId,
   cadastrarCurriculo,
   Curriculo,
   excluirCurriculo,
   listarCurriculos,
   pesquisarCurriculosPorNome,
-  buscarCurriculoPorId,
 } from '@/lib/CurriculoService';
 
 export async function GET(request: NextRequest) {
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     console.error("❌ [POST /api/curriculos] Erro ao cadastrar currículo:", error);
     if (error instanceof Error) {
       console.error("❌ Erro Message:", error.message);
-      console.error("❌ Erro Code:", (error as any).code);
+      console.error("❌ Erro Code:", (error as { code?: string }).code);
       console.error("❌ Stack trace:", error.stack);
     }
     const errorMessage = error instanceof Error ? error.message : String(error);

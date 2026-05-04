@@ -8,10 +8,11 @@ import {
   limit,
   orderBy,
   query,
+  QueryDocumentSnapshot,
   serverTimestamp,
   updateDoc,
   where,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 
 import { db } from './firebaseconfig';
 
@@ -80,7 +81,7 @@ export async function cadastrarCurriculo(curriculo: Curriculo) {
   }
 }
 
-const normalizeCurriculo = (item: any) => {
+const normalizeCurriculo = (item: QueryDocumentSnapshot) => {
   const data = item.data();
   const createdAt = data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt || null;
 
