@@ -10,13 +10,28 @@ import {
   excluirCurriculo,
   listarCurriculos,
   pesquisarCurriculosPorNome,
+  buscarCurriculoPorId,
 } from '@/lib/CurriculoService';
 
 export async function GET(request: NextRequest) {
   try {
-    console.log("📌 [GET /api/curriculos] Iniciando listagem...");
+    console.log("📌 [GET /api/curriculos] Iniciando consulta...");
     const searchParams = request.nextUrl.searchParams;
+    const id = searchParams.get("id");
     const nome = searchParams.get("nome");
+
+    if (id) {
+      console.log("🔎 [GET /api/curriculos] Buscando currículo por ID:", id);
+      const curriculo = await buscarCurriculoPorId(id);
+      if (!curriculo) {
+        return NextResponse.json(
+          { erro: "Currículo não encontrado" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({ sucesso: true, curriculo });
+    }
 
     let curriculos;
 
@@ -69,9 +84,18 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("❌ [POST /api/curriculos] Erro ao cadastrar currículo:", error);
-    console.error("❌ Stack trace:", error instanceof Error ? error.stack : "N/A");
+    if (error instanceof Error) {
+      console.error("❌ Erro Message:", error.message);
+      console.error("❌ Erro Code:", (error as any).code);
+      console.error("❌ Stack trace:", error.stack);
+    }
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { erro: "Erro ao cadastrar currículo", detalhes: String(error) },
+      { 
+        erro: "Erro ao cadastrar currículo", 
+        detalhes: errorMessage,
+        tipo: error instanceof Error ? error.constructor.name : typeof error
+      },
       { status: 500 }
     );
   }

@@ -81,7 +81,7 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
     return () => subscription.unsubscribe();
   }, [watch, getValues, onDataChange]);
 
-  const handleSaveLayout = () => {
+  const handleSaveLayout = async () => {
     if (!isValid) {
       // Coletar todos os erros do formulário
       const erros: string[] = [];
@@ -159,27 +159,35 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
     }
 
     const curriculoData = getValues();
-    
-    // Salvar no localStorage
-    const curriculosSalvos = JSON.parse(localStorage.getItem('curriculosSalvos') || '[]');
-    const novoId = Date.now().toString();
-    
-    const novoLayout = {
-      id: novoId,
-      timestamp: new Date().toISOString(),
-      ...curriculoData
-    };
-    
-    curriculosSalvos.push(novoLayout);
-    localStorage.setItem('curriculosSalvos', JSON.stringify(curriculosSalvos));
-    
-    toast.success('Layout salvo com sucesso!', {
-      position: 'bottom-right',
-      duration: 3000,
-    });
 
-    if (onSave) {
-      onSave(curriculoData);
+    try {
+      const response = await fetch('/api/curriculo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(curriculoData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.sucesso) {
+        throw new Error(result.erro || 'Erro ao salvar currículo no banco');
+      }
+
+      toast.success('Currículo salvo no banco com sucesso!', {
+        position: 'bottom-right',
+        duration: 3000,
+      });
+
+      if (onSave) {
+        onSave(curriculoData);
+      }
+    } catch (error) {
+      console.error('Erro ao salvar currículo no banco:', error);
+      toast.error('Erro ao salvar no banco. Tente novamente.', {
+        duration: 5000,
+      });
     }
   };
 

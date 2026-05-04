@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -50,20 +51,45 @@ export async function testarConexaoFirestore() {
 }
 
 export async function cadastrarCurriculo(curriculo: Curriculo) {
-  const docRef = await addDoc(collection(db, COLLECTION_NAME), {
-    fullName: curriculo.fullName,
-    jobTitle: curriculo.jobTitle,
-    email: curriculo.email,
-    phone: curriculo.phone,
-    github: curriculo.github || "",
-    linkedin: curriculo.linkedin || "",
-    summary: curriculo.summary,
-    experience: curriculo.experience || [],
-    education: curriculo.education || [],
-    createdAt: serverTimestamp(),
-  });
-  return docRef.id;
+  try {
+    console.log("📝 [CurriculoService] Iniciando cadastro com dados:", curriculo);
+    const docRef = await addDoc(collection(db, COLLECTION_NAME), {
+      fullName: curriculo.fullName,
+      jobTitle: curriculo.jobTitle,
+      email: curriculo.email,
+      phone: curriculo.phone,
+      github: curriculo.github || "",
+      linkedin: curriculo.linkedin || "",
+      summary: curriculo.summary,
+      experience: curriculo.experience || [],
+      education: curriculo.education || [],
+      createdAt: serverTimestamp(),
+    });
+    console.log("✅ [CurriculoService] Documento criado com sucesso. ID:", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("❌ [CurriculoService] Erro ao cadastrar:", error);
+    if (error instanceof Error) {
+      console.error("Message:", error.message);
+      console.error("Name:", error.name);
+    }
+    if (typeof error === 'object' && error !== null) {
+      console.error("Error details:", JSON.stringify(error, null, 2));
+    }
+    throw error;
+  }
 }
+
+const normalizeCurriculo = (item: any) => {
+  const data = item.data();
+  const createdAt = data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt || null;
+
+  return {
+    id: item.id,
+    ...data,
+    createdAt,
+  } as Curriculo;
+};
 
 export async function listarCurriculos() {
   const q = query(
@@ -71,10 +97,7 @@ export async function listarCurriculos() {
     orderBy("fullName", "asc")
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((item) => ({
-    id: item.id,
-    ...item.data(),
-  })) as Curriculo[];
+  return snapshot.docs.map(normalizeCurriculo) as Curriculo[];
 }
 
 export async function pesquisarCurriculosPorNome(nome: string) {
@@ -84,10 +107,25 @@ export async function pesquisarCurriculosPorNome(nome: string) {
     where("fullName", "<=", nome + "\uf8ff")
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((item) => ({
-    id: item.id,
-    ...item.data(),
-  })) as Curriculo[];
+  return snapshot.docs.map(normalizeCurriculo) as Curriculo[];
+}
+
+export async function buscarCurriculoPorId(id: string) {
+  const docRef = doc(db, COLLECTION_NAME, id);
+  const snapshot = await getDoc(docRef);
+
+  if (!snapshot.exists()) {
+    return null;
+  }
+
+  const data = snapshot.data();
+  const createdAt = data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt || null;
+
+  return {
+    id: snapshot.id,
+    ...data,
+    createdAt,
+  } as Curriculo;
 }
 
 export async function atualizarCurriculo(id: string, curriculo: Omit<Curriculo, "id">) {
