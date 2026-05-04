@@ -84,9 +84,18 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("❌ [POST /api/curriculos] Erro ao cadastrar currículo:", error);
-    console.error("❌ Stack trace:", error instanceof Error ? error.stack : "N/A");
+    if (error instanceof Error) {
+      console.error("❌ Erro Message:", error.message);
+      console.error("❌ Erro Code:", (error as any).code);
+      console.error("❌ Stack trace:", error.stack);
+    }
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { erro: "Erro ao cadastrar currículo", detalhes: String(error) },
+      { 
+        erro: "Erro ao cadastrar currículo", 
+        detalhes: errorMessage,
+        tipo: error instanceof Error ? error.constructor.name : typeof error
+      },
       { status: 500 }
     );
   }

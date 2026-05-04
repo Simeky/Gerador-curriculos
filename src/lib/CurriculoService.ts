@@ -51,19 +51,33 @@ export async function testarConexaoFirestore() {
 }
 
 export async function cadastrarCurriculo(curriculo: Curriculo) {
-  const docRef = await addDoc(collection(db, COLLECTION_NAME), {
-    fullName: curriculo.fullName,
-    jobTitle: curriculo.jobTitle,
-    email: curriculo.email,
-    phone: curriculo.phone,
-    github: curriculo.github || "",
-    linkedin: curriculo.linkedin || "",
-    summary: curriculo.summary,
-    experience: curriculo.experience || [],
-    education: curriculo.education || [],
-    createdAt: serverTimestamp(),
-  });
-  return docRef.id;
+  try {
+    console.log("📝 [CurriculoService] Iniciando cadastro com dados:", curriculo);
+    const docRef = await addDoc(collection(db, COLLECTION_NAME), {
+      fullName: curriculo.fullName,
+      jobTitle: curriculo.jobTitle,
+      email: curriculo.email,
+      phone: curriculo.phone,
+      github: curriculo.github || "",
+      linkedin: curriculo.linkedin || "",
+      summary: curriculo.summary,
+      experience: curriculo.experience || [],
+      education: curriculo.education || [],
+      createdAt: serverTimestamp(),
+    });
+    console.log("✅ [CurriculoService] Documento criado com sucesso. ID:", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("❌ [CurriculoService] Erro ao cadastrar:", error);
+    if (error instanceof Error) {
+      console.error("Message:", error.message);
+      console.error("Name:", error.name);
+    }
+    if (typeof error === 'object' && error !== null) {
+      console.error("Error details:", JSON.stringify(error, null, 2));
+    }
+    throw error;
+  }
 }
 
 const normalizeCurriculo = (item: any) => {
