@@ -16,6 +16,7 @@ import { Card } from '@/components/ui/card';
 interface Curriculo {
   id: string;
   fullName: string;
+  cpf: string;
   jobTitle: string;
   summary: string;
   createdAt: string;

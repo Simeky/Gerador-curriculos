@@ -1,18 +1,26 @@
 import * as yup from 'yup';
 
 import {
+  validadorCPF,
   validadorEmail,
   validadorTelefone,
 } from '@/lib/validationSchemas';
 
 export const resumeSchema = yup.object({
   fullName: yup.string().required('Nome completo é obrigatório'),
+  cpf: validadorCPF,
   jobTitle: yup.string().required('Cargo pretendido é obrigatório'),
   email: validadorEmail,
   phone: validadorTelefone,
   github: yup.string().url('URL do GitHub inválida').optional(),
   linkedin: yup.string().url('URL do LinkedIn inválida').optional(),
   summary: yup.string().required('Resumo é obrigatório').min(20, 'O resumo deve ter pelo menos 20 caracteres'),
+  profileImage: yup.string().optional(),
+  skills: yup.array().of(
+    yup.object({
+      skill: yup.string().required('Habilidade é obrigatória'),
+    })
+  ).optional(),
   experience: yup.array().of(
     yup.object({
       company: yup.string().required('Empresa é obrigatória'),

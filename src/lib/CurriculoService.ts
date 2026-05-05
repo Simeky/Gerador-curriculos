@@ -19,12 +19,17 @@ import { db } from './firebaseconfig';
 export type Curriculo = {
   id?: string;
   fullName: string;
+  cpf: string;
   jobTitle: string;
   email: string;
   phone: string;
   github?: string;
   linkedin?: string;
   summary: string;
+  profileImage?: string;
+  skills?: Array<{
+    skill: string;
+  }>;
   experience?: Array<{
     company: string;
     position: string;
@@ -54,18 +59,41 @@ export async function testarConexaoFirestore() {
 export async function cadastrarCurriculo(curriculo: Curriculo) {
   try {
     console.log("📝 [CurriculoService] Iniciando cadastro com dados:", curriculo);
+    
+    if (!db) {
+      throw new Error('Firestore não foi inicializado. Verifique as variáveis de ambiente.');
+    }
+
+    console.log("📝 [CurriculoService] Adicionando documento à coleção:", COLLECTION_NAME);
+    
     const docRef = await addDoc(collection(db, COLLECTION_NAME), {
-      fullName: curriculo.fullName,
-      jobTitle: curriculo.jobTitle,
-      email: curriculo.email,
-      phone: curriculo.phone,
-      github: curriculo.github || "",
-      linkedin: curriculo.linkedin || "",
-      summary: curriculo.summary,
-      experience: curriculo.experience || [],
-      education: curriculo.education || [],
+      fullName: curriculo.fullName?.trim() || "",
+      cpf: curriculo.cpf?.trim() || "",
+      jobTitle: curriculo.jobTitle?.trim() || "",
+      email: curriculo.email?.trim() || "",
+      phone: curriculo.phone?.trim() || "",
+      github: (curriculo.github || "")?.trim(),
+      linkedin: (curriculo.linkedin || "")?.trim(),
+      summary: curriculo.summary?.trim() || "",
+      profileImage: curriculo.profileImage || "",
+      skills: (curriculo.skills || []).map(skill => ({
+        skill: skill.skill?.trim() || "",
+      })),
+      experience: (curriculo.experience || []).map(exp => ({
+        company: exp.company?.trim() || "",
+        position: exp.position?.trim() || "",
+        startDate: exp.startDate || "",
+        endDate: exp.endDate || "",
+        description: exp.description?.trim() || "",
+      })),
+      education: (curriculo.education || []).map(edu => ({
+        institution: edu.institution?.trim() || "",
+        degree: edu.degree?.trim() || "",
+        year: edu.year || "",
+      })),
       createdAt: serverTimestamp(),
     });
+    
     console.log("✅ [CurriculoService] Documento criado com sucesso. ID:", docRef.id);
     return docRef.id;
   } catch (error) {
@@ -73,9 +101,12 @@ export async function cadastrarCurriculo(curriculo: Curriculo) {
     if (error instanceof Error) {
       console.error("Message:", error.message);
       console.error("Name:", error.name);
+      console.error("Stack:", error.stack);
     }
     if (typeof error === 'object' && error !== null) {
-      console.error("Error details:", JSON.stringify(error, null, 2));
+      const errorObj = error as Record<string, unknown>;
+      console.error("Code:", errorObj.code);
+      console.error("Details:", errorObj.message);
     }
     throw error;
   }
@@ -132,15 +163,30 @@ export async function buscarCurriculoPorId(id: string) {
 export async function atualizarCurriculo(id: string, curriculo: Omit<Curriculo, "id">) {
   const docRef = doc(db, COLLECTION_NAME, id);
   await updateDoc(docRef, {
-    fullName: curriculo.fullName,
-    jobTitle: curriculo.jobTitle,
-    email: curriculo.email,
-    phone: curriculo.phone,
-    github: curriculo.github || "",
-    linkedin: curriculo.linkedin || "",
-    summary: curriculo.summary,
-    experience: curriculo.experience || [],
-    education: curriculo.education || [],
+    fullName: curriculo.fullName?.trim() || "",
+    cpf: curriculo.cpf?.trim() || "",
+    jobTitle: curriculo.jobTitle?.trim() || "",
+    email: curriculo.email?.trim() || "",
+    phone: curriculo.phone?.trim() || "",
+    github: (curriculo.github || "")?.trim(),
+    linkedin: (curriculo.linkedin || "")?.trim(),
+    summary: curriculo.summary?.trim() || "",
+    profileImage: curriculo.profileImage || "",
+    skills: (curriculo.skills || []).map(skill => ({
+      skill: skill.skill?.trim() || "",
+    })),
+    experience: (curriculo.experience || []).map(exp => ({
+      company: exp.company?.trim() || "",
+      position: exp.position?.trim() || "",
+      startDate: exp.startDate || "",
+      endDate: exp.endDate || "",
+      description: exp.description?.trim() || "",
+    })),
+    education: (curriculo.education || []).map(edu => ({
+      institution: edu.institution?.trim() || "",
+      degree: edu.degree?.trim() || "",
+      year: edu.year || "",
+    })),
   });
 }
 
