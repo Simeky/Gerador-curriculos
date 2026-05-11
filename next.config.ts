@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         source: '/curriculos/visualizar',
         destination: '/sistema/curriculos/lista',
       },
+      {
+        source: '/curriculos/editar',
+        destination: '/sistema/curriculos/editar',
+      },
     ];
   },
   images: {

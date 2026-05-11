@@ -8,6 +8,7 @@ import { ResumeData } from '@/app/sistema/curriculos/gerador/validacao';
 import FormCurriculo from '@/components/FormCurriculo/page';
 import Nav from '@/components/nav/page';
 import PreviewCurriculo from '@/components/PreviewCurriculo/page';
+import RealTimeSuggestions from '@/components/RealTimeSuggestions/page';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -27,13 +28,13 @@ export default function Gerador() {
           <p className="text-slate-500 mt-2">Crie seu currículo profissional rapidamente preenchendo o formulário abaixo.</p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          <Card className="p-6 md:p-8 print:hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <Card className="p-6 md:p-8 print:hidden lg:col-span-1">
             <h2 className="text-2xl font-semibold mb-6">Seus Dados</h2>
             <FormCurriculo onDataChange={setResumeData} />
           </Card>
 
-          <section className="sticky top-8 print:static">
+          <section className="lg:col-span-1 sticky top-8 print:static">
             <Card className="p-0 md:p-0 min-h-200 print:border-none print:shadow-none">
               <div className="p-6 md:p-8 pb-0 flex justify-between items-center print:hidden border-b border-slate-100 mb-6">
                 <h2 className="text-2xl font-semibold">Visualização</h2>
@@ -57,6 +58,12 @@ export default function Gerador() {
               )}
             </Card>
           </section>
+
+          <aside className="lg:col-span-1 sticky top-8 print:hidden">
+            <Card className="p-6 bg-linear-to-b from-slate-50 to-slate-100">
+              <RealTimeSuggestions resumeData={resumeData} />
+            </Card>
+          </aside>
         </div>
       </div>
     </main>

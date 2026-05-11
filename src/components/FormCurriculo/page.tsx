@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect } from 'react';
+import {
+  useEffect,
+  useRef,
+} from 'react';
 
 import {
   Briefcase,
   FileText,
+  Image as ImageIcon,
   Mail,
   Phone,
   Plus,
@@ -36,28 +40,35 @@ import { InputMask } from '@react-input/mask';
 interface FormCurriculoProps {
   onDataChange: (data: ResumeData) => void;
   onSave?: (data: ResumeData) => void;
+  initialData?: ResumeData;
 }
 
-export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
+export default function FormCurriculo({ onDataChange, onSave, initialData }: FormCurriculoProps) {
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  
   const {
     register,
     watch,
     getValues,
+    setValue,
     control,
     formState: { errors, isValid },
   } = useForm<ResumeData>({
     resolver: yupResolver(resumeSchema as never),
     mode: "onChange",
-    defaultValues: {
+    defaultValues: initialData || {
       fullName: " ",
+      cpf: "",
       jobTitle: "",
       email: "",
       phone: "",
       github: "",
       linkedin: "",
       summary: "",
+      profileImage: "",
       experience: [],
-      education: []
+      education: [],
+      skills: []
     }
   });
 
@@ -71,6 +82,11 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
     name: "education",
   });
 
+  const { fields: skillsFields, append: appendSkill, remove: removeSkill } = useFieldArray({
+    control,
+    name: "skills",
+  });
+
   useEffect(() => {
     onDataChange(getValues() as ResumeData);
     
@@ -81,6 +97,35 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
     return () => subscription.unsubscribe();
   }, [watch, getValues, onDataChange]);
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar tipo de arquivo
+    if (!file.type.startsWith('image/')) {
+      toast.error('Por favor, selecione um arquivo de imagem válido');
+      return;
+    }
+
+    // Validar tamanho (máx 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('A imagem não pode ter mais de 5MB');
+      return;
+    }
+
+    // Converter para base64
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      setValue('profileImage', result);
+      toast.success('Imagem carregada com sucesso!');
+    };
+    reader.onerror = () => {
+      toast.error('Erro ao carregar a imagem');
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSaveLayout = async () => {
     if (!isValid) {
       // Coletar todos os erros do formulário
@@ -89,6 +134,9 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
       
       if (fields.fullName === '' || fields.fullName === undefined) {
         erros.push('Nome completo');
+      }
+      if (fields.cpf === '' || fields.cpf === undefined) {
+        erros.push('CPF');
       }
       if (fields.jobTitle === '' || fields.jobTitle === undefined) {
         erros.push('Cargo pretendido');
@@ -107,6 +155,7 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
 
       // Verificar erros específicos dos campos
       if (errors.fullName?.message) erros.push(`Nome: ${errors.fullName.message}`);
+      if (errors.cpf?.message) erros.push(`CPF: ${errors.cpf.message}`);
       if (errors.jobTitle?.message) erros.push(`Cargo: ${errors.jobTitle.message}`);
       if (errors.email?.message) erros.push(`E-mail: ${errors.email.message}`);
       if (errors.phone?.message) erros.push(`Telefone: ${errors.phone.message}`);
@@ -161,6 +210,8 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
     const curriculoData = getValues();
 
     try {
+      console.log('📤 [FormCurriculo] Enviando currículo para API:', curriculoData);
+      
       const response = await fetch('/api/curriculo', {
         method: 'POST',
         headers: {
@@ -169,10 +220,25 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
         body: JSON.stringify(curriculoData),
       });
 
+      console.log('📨 [FormCurriculo] Status da resposta:', response.status);
+
+      if (!response.ok) {
+        console.error('❌ [FormCurriculo] Resposta não OK:', response.status, response.statusText);
+      }
+
       const result = await response.json();
+      console.log('📨 [FormCurriculo] Resultado:', result);
 
       if (!response.ok || !result.sucesso) {
-        throw new Error(result.erro || 'Erro ao salvar currículo no banco');
+        const errorMessage = result.erro || 'Erro ao salvar currículo no banco';
+        console.error('❌ [FormCurriculo] Erro na resposta:', errorMessage);
+        console.error('📨 [FormCurriculo] Detalhes:', result.detalhes);
+        
+        toast.error(errorMessage, {
+          description: result.detalhes || 'Tente novamente mais tarde',
+          duration: 5000,
+        });
+        return;
       }
 
       toast.success('Currículo salvo no banco com sucesso!', {
@@ -180,19 +246,73 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
         duration: 3000,
       });
 
+      console.log('✅ [FormCurriculo] Currículo salvo com ID:', result.id);
+
       if (onSave) {
         onSave(curriculoData);
       }
     } catch (error) {
-      console.error('Erro ao salvar currículo no banco:', error);
-      toast.error('Erro ao salvar no banco. Tente novamente.', {
-        duration: 5000,
-      });
+      console.error('❌ [FormCurriculo] Erro ao salvar currículo no banco:', error);
+      
+      // Tratamento específico para erro de fetch
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        console.error('❌ [FormCurriculo] Erro de conectividade: Não foi possível alcançar a API');
+        console.error('❌ [FormCurriculo] Verifique:');
+        console.error('   - Se o servidor está rodando (npm run dev)');
+        console.error('   - Se o Firebase está configurado corretamente (.env.local)');
+        console.error('   - Se a URL da API está correta');
+        
+        toast.error('Erro de conectividade com a API', {
+          description: 'Verifique se o servidor está rodando e se o Firebase está configurado.',
+          duration: 5000,
+        });
+      } else if (error instanceof Error) {
+        toast.error('Erro ao salvar no banco', {
+          description: error.message,
+          duration: 5000,
+        });
+      } else {
+        toast.error('Erro ao salvar no banco. Tente novamente.', {
+          duration: 5000,
+        });
+      }
     }
   };
 
   return (
     <form className="space-y-6">
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium text-slate-900 border-b pb-2">Foto de Perfil</h3>
+        <div className="space-y-2">
+          <Label htmlFor="profileImage" className="flex items-center gap-2">
+            <ImageIcon className="text-slate-400 w-4 h-4" />
+            Selecione uma Imagem
+          </Label>
+          <div className="flex gap-2">
+            <Input
+              ref={imageInputRef}
+              id="profileImage"
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => imageInputRef.current?.click()}
+              className="flex-1"
+            >
+              <ImageIcon className="mr-2 w-4 h-4" /> Escolher Imagem
+            </Button>
+          </div>
+          <p className="text-xs text-slate-500">Máximo 5MB. Formatos: JPG, PNG, GIF, WebP</p>
+          {watch('profileImage') && (
+            <p className="text-sm text-green-600">✓ Imagem carregada com sucesso!</p>
+          )}
+        </div>
+      </div>
+
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-slate-900 border-b pb-2">Informações Pessoais</h3>
         
@@ -204,6 +324,23 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
             </Label>
             <Input id="fullName" placeholder="Ex: João Silva" {...register("fullName")} />
             {errors.fullName && <p className="text-sm text-red-500">{errors.fullName.message}</p>}
+          </div>
+
+          <div className="space-y-2 flex flex-col">
+            <Label htmlFor="cpf" className="flex items-center gap-2">
+              <User className="text-slate-400 w-4 h-4" />
+              CPF *
+            </Label>
+            <InputMask 
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              mask="___.___.___-__" 
+              replacement={{ _: /\d/ }}
+              {...register("cpf")}
+              id="cpf" 
+              placeholder="000.000.000-00" 
+              type="text"
+            />
+            {errors.cpf && <p className="text-sm text-red-500">{errors.cpf.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -276,6 +413,28 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
           />
           {errors.summary && <p className="text-sm text-red-500">{errors.summary.message}</p>}
         </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium text-slate-900 border-b pb-2">Habilidades</h3>
+        {skillsFields.map((field, index) => (
+          <div key={field.id} className="border border-slate-200 rounded-lg p-4 space-y-4">
+            <div className="flex justify-between items-center">
+              <h4 className="font-medium">Habilidade {index + 1}</h4>
+              <Button type="button" variant="ghost" size="sm" onClick={() => removeSkill(index)} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Trash2 className="mr-2 w-4 h-4" /> Remover
+              </Button>
+            </div>
+            <div className="space-y-2">
+              <Label>Habilidade</Label>
+              <Input placeholder="Ex: JavaScript, React, etc..." {...register(`skills.${index}.skill`)} />
+              {errors.skills?.[index]?.skill && <p className="text-sm text-red-500">{errors.skills[index].skill.message}</p>}
+            </div>
+          </div>
+        ))}
+        <Button type="button" variant="outline" onClick={() => appendSkill({ skill: "" })}>
+          <Plus className="mr-2 w-4 h-4" /> Adicionar Habilidade
+        </Button>
       </div>
       
       <div className="space-y-4">

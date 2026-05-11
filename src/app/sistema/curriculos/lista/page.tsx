@@ -2,28 +2,45 @@
 
 import {
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
-import { Trash2 } from 'lucide-react';
+import {
+  Edit,
+  Lightbulb,
+  Search,
+  Trash2,
+} from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
 import Nav from '@/components/nav/page';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Curriculo as CurriculoType } from '@/lib/CurriculoService';
+import { analisarCurriculo } from '@/lib/SuggestionsService';
 
 interface Curriculo {
   id: string;
   fullName: string;
+  cpf: string;
   jobTitle: string;
   summary: string;
+  email?: string;
+  phone?: string;
+  skills?: Array<{ skill: string }>;
+  experience?: Array<{ company: string; position: string }>;
+  education?: Array<{ institution: string; degree: string }>;
   createdAt: string;
 }
 
 export default function ListaCurriculos() {
   const [curriculos, setCurriculos] = useState<Curriculo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState<'all' | 'name' | 'job'>('all');
 
   useEffect(() => {
     const fetchCurriculos = async () => {
@@ -52,6 +69,26 @@ export default function ListaCurriculos() {
     fetchCurriculos();
   }, []);
 
+  // Filtrar currículos baseado no termo de busca
+  const filteredCurriculos = useMemo(() => {
+    if (!searchTerm.trim()) return curriculos;
+
+    const searchLower = searchTerm.toLowerCase();
+
+    return curriculos.filter(curriculo => {
+      if (filterType === 'name') {
+        return curriculo.fullName.toLowerCase().includes(searchLower);
+      } else if (filterType === 'job') {
+        return curriculo.jobTitle.toLowerCase().includes(searchLower);
+      } else {
+        return (
+          curriculo.fullName.toLowerCase().includes(searchLower) ||
+          curriculo.jobTitle.toLowerCase().includes(searchLower)
+        );
+      }
+    });
+  }, [curriculos, searchTerm, filterType]);
+
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm('Tem certeza que deseja deletar este currículo?');
     if (!confirmDelete) return;
@@ -79,6 +116,11 @@ export default function ListaCurriculos() {
     return new Date(createdAt).toLocaleDateString('pt-BR');
   };
 
+  const getSuggestionCount = (curriculo: Curriculo) => {
+    const suggestions = analisarCurriculo(curriculo as CurriculoType);
+    return suggestions.length;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50">
@@ -99,39 +141,141 @@ export default function ListaCurriculos() {
           <p className="text-slate-600">Visualize e gerencie todos os seus currículos salvos</p>
         </div>
 
-        {curriculos.length === 0 ? (
+        {/* Search and Filter */}
+        <div className="mb-6 space-y-4">
+          <div className="flex gap-3 flex-col md:flex-row">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-3 text-slate-400" size={18} />
+              <Input
+                placeholder="Buscar por nome ou cargo..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant={filterType === 'all' ? 'default' : 'outline'}
+                onClick={() => setFilterType('all')}
+                size="sm"
+              >
+                Todos
+              </Button>
+              <Button
+                variant={filterType === 'name' ? 'default' : 'outline'}
+                onClick={() => setFilterType('name')}
+                size="sm"
+              >
+                Por Nome
+              </Button>
+              <Button
+                variant={filterType === 'job' ? 'default' : 'outline'}
+                onClick={() => setFilterType('job')}
+                size="sm"
+              >
+                Por Cargo
+              </Button>
+            </div>
+          </div>
+          {searchTerm && (
+            <p className="text-sm text-slate-600">
+              Encontrados {filteredCurriculos.length} de {curriculos.length} currículos
+            </p>
+          )}
+        </div>
+
+        {filteredCurriculos.length === 0 ? (
           <Card className="p-12 text-center">
-            <p className="text-slate-600 text-lg mb-6">Nenhum currículo salvo ainda.</p>
-            <Link href="/curriculos/gerador">
-              <Button>Criar Primeiro Currículo</Button>
-            </Link>
+            {searchTerm ? (
+              <>
+                <p className="text-slate-600 text-lg mb-6">
+                  Nenhum currículo encontrado com &quot;{searchTerm}&quot;.
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setFilterType('all');
+                  }}
+                >
+                  Limpar Busca
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="text-slate-600 text-lg mb-6">Nenhum currículo salvo ainda.</p>
+                <Link href="/curriculos/gerador">
+                  <Button>Criar Primeiro Currículo</Button>
+                </Link>
+              </>
+            )}
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {curriculos.map((curriculo) => (
-              <Card key={curriculo.id} className="relative group hover:shadow-lg hover:border-indigo-300 transition-all p-6 h-full">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-slate-900 mb-1">{curriculo.fullName}</h3>
-                    <p className="text-indigo-600 font-medium text-sm">{curriculo.jobTitle}</p>
+            {filteredCurriculos.map((curriculo) => {
+              const suggestionCount = getSuggestionCount(curriculo);
+              return (
+                <Card
+                  key={curriculo.id}
+                  className="relative group hover:shadow-lg hover:border-indigo-300 transition-all p-6 h-full flex flex-col"
+                >
+                  {/* Header com título e ações */}
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-slate-900 mb-1">
+                        {curriculo.fullName}
+                      </h3>
+                      <p className="text-indigo-600 font-medium text-sm">{curriculo.jobTitle}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Link href={`/curriculos/editar/${curriculo.id}`}>
+                        <button
+                          className="text-indigo-600 hover:text-indigo-700 transition-colors p-2"
+                          aria-label={`Editar currículo de ${curriculo.fullName}`}
+                        >
+                          <Edit size={16} />
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(curriculo.id)}
+                        className="text-red-500 hover:text-red-700 transition-colors p-2"
+                        aria-label={`Deletar currículo de ${curriculo.fullName}`}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => handleDelete(curriculo.id)}
-                    className="text-red-500 hover:text-red-700 transition-colors p-2 relative z-20"
-                    aria-label={`Deletar currículo de ${curriculo.fullName}`}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-                <p className="text-slate-600 text-sm line-clamp-3 mb-4">
-                  {curriculo.summary}
-                </p>
-                <div className="text-xs text-slate-400">
-                  Salvo em {formatDate(curriculo.createdAt)}
-                </div>
-                <Link href={`/curriculos/visualizar/${curriculo.id}`} className="absolute inset-0 z-10 group-hover:scale-105 transition-transform" aria-label={`Visualizar currículo de ${curriculo.fullName}`} />
-              </Card>
-            ))}
+
+                  {/* Resumo */}
+                  <p className="text-slate-600 text-sm line-clamp-2 mb-3 flex-1">
+                    {curriculo.summary}
+                  </p>
+
+                  {/* Sugestões */}
+                  {suggestionCount > 0 && (
+                    <Link
+                      href={`/curriculos/sugestoes/${curriculo.id}`}
+                      className="mb-3 inline-flex items-center gap-2 text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors"
+                    >
+                      <Lightbulb size={14} />
+                      {suggestionCount} sugestão{suggestionCount > 1 ? 'ões' : ''}
+                    </Link>
+                  )}
+
+                  {/* Data */}
+                  <div className="text-xs text-slate-400 border-t border-slate-100 pt-3 mt-auto">
+                    Salvo em {formatDate(curriculo.createdAt)}
+                  </div>
+
+                  {/* Link invisível para visualizar */}
+                  <Link
+                    href={`/curriculos/visualizar/${curriculo.id}`}
+                    className="absolute inset-0 z-0 group-hover:scale-105 transition-transform"
+                    aria-label={`Visualizar currículo de ${curriculo.fullName}`}
+                  />
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>
