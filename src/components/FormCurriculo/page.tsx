@@ -40,9 +40,10 @@ import { InputMask } from '@react-input/mask';
 interface FormCurriculoProps {
   onDataChange: (data: ResumeData) => void;
   onSave?: (data: ResumeData) => void;
+  initialData?: ResumeData;
 }
 
-export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoProps) {
+export default function FormCurriculo({ onDataChange, onSave, initialData }: FormCurriculoProps) {
   const imageInputRef = useRef<HTMLInputElement>(null);
   
   const {
@@ -55,7 +56,7 @@ export default function FormCurriculo({ onDataChange, onSave }: FormCurriculoPro
   } = useForm<ResumeData>({
     resolver: yupResolver(resumeSchema as never),
     mode: "onChange",
-    defaultValues: {
+    defaultValues: initialData || {
       fullName: " ",
       cpf: "",
       jobTitle: "",

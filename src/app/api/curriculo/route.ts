@@ -182,9 +182,9 @@ export async function PUT(request: NextRequest) {
   try {
     console.log("📌 [PUT /api/curriculo] Iniciando atualização...");
     
-    const body = await request.json();
-    const { id, ...curriculoData } = body;
-
+    const searchParams = request.nextUrl.searchParams;
+    const id = searchParams.get("id");
+    
     if (!id) {
       return NextResponse.json(
         { erro: "ID do currículo é obrigatório" },
@@ -192,9 +192,11 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    const body = await request.json();
+
     console.log("📌 [PUT /api/curriculo] Atualizando currículo ID:", id);
     
-    await atualizarCurriculo(id, curriculoData);
+    await atualizarCurriculo(id, body);
     console.log("✅ [PUT /api/curriculo] Currículo atualizado com sucesso.");
 
     return NextResponse.json(
