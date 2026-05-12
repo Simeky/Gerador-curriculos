@@ -28,8 +28,8 @@ export default function Gerador() {
           <p className="text-slate-500 mt-2">Crie seu currículo profissional rapidamente preenchendo o formulário abaixo.</p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          <Card className="p-6 md:p-8 print:hidden lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <Card className="p-6 md:p-8 print:hidden">
             <h2 className="text-2xl font-semibold mb-6">Seus Dados</h2>
             <FormCurriculo onDataChange={setResumeData} />
           </Card>
@@ -58,13 +58,10 @@ export default function Gerador() {
               )}
             </Card>
           </section>
-
-          <aside className="lg:col-span-1 sticky top-8 print:hidden">
-            <Card className="p-6 bg-linear-to-b from-slate-50 to-slate-100">
-              <RealTimeSuggestions resumeData={resumeData} />
-            </Card>
-          </aside>
         </div>
+
+        {/* Componente de sugestões (botão flutuante) */}
+        <RealTimeSuggestions resumeData={resumeData} />
       </div>
     </main>
   );

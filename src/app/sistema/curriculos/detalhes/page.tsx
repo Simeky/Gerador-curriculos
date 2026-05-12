@@ -14,10 +14,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  usePathname,
-  useSearchParams,
-} from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
   FaGithub,
   FaLinkedin,
@@ -29,12 +26,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
 function DetalhesCurriculoContent() {
-  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const id =
-    pathname.match(/^\/curriculos\/visualizar\/([^/]+)$/)?.[1] ??
-    searchParams.get('id') ??
-    '';
+  const id = searchParams.get('id') ?? '';
   
   const [curriculo, setCurriculo] = useState<ResumeData | null>(null);
   const [loading, setLoading] = useState(true);

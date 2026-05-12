@@ -10,7 +10,7 @@ import {
   Lightbulb,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
 import Nav from '@/components/nav/page';
@@ -25,8 +25,8 @@ import {
 } from '@/lib/SuggestionsService';
 
 export default function SuggestoesCurriculo() {
-  const params = useParams();
-  const id = params.id as string;
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id') as string;
 
   const [curriculo, setCurriculo] = useState<Curriculo | null>(null);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -82,7 +82,7 @@ export default function SuggestoesCurriculo() {
         <div className="max-w-4xl mx-auto p-4 md:p-8">
           <Card className="p-12 text-center">
             <p className="text-slate-600 text-lg mb-6">Currículo não encontrado.</p>
-            <Link href="/curriculos/lista">
+            <Link href="/curriculos/visualizar">
               <Button>Voltar à Lista</Button>
             </Link>
           </Card>
@@ -100,7 +100,7 @@ export default function SuggestoesCurriculo() {
       <div className="max-w-4xl mx-auto p-4 md:p-8">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/curriculos/lista">
+          <Link href="/curriculos/visualizar">
             <Button variant="outline" size="sm" className="mb-4 gap-2">
               <ArrowLeft size={16} />
               Voltar
@@ -161,12 +161,12 @@ export default function SuggestoesCurriculo() {
         </div>
 
         <div className="mt-12 flex gap-4 justify-center">
-          <Link href={`/curriculos/editar/${id}`}>
+          <Link href={`/curriculos/editar?id=${id}`}>
             <Button size="lg" className="gap-2">
               ✏️ Editar Currículo
             </Button>
           </Link>
-          <Link href={`/curriculos/visualizar/${id}`}>
+          <Link href={`/curriculos/visualizar?id=${id}`}>
             <Button variant="outline" size="lg" className="gap-2">
               👁️ Visualizar
             </Button>

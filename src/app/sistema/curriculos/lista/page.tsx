@@ -13,6 +13,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import Nav from '@/components/nav/page';
@@ -37,6 +38,7 @@ interface Curriculo {
 }
 
 export default function ListaCurriculos() {
+  const router = useRouter();
   const [curriculos, setCurriculos] = useState<Curriculo[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -217,9 +219,9 @@ export default function ListaCurriculos() {
               return (
                 <Card
                   key={curriculo.id}
-                  className="relative group hover:shadow-lg hover:border-indigo-300 transition-all p-6 h-full flex flex-col"
+                  className="group hover:shadow-lg hover:border-indigo-300 transition-all p-6 h-full flex flex-col cursor-pointer"
+                  onClick={() => router.push(`/curriculos/visualizar?id=${curriculo.id}`)}
                 >
-                  {/* Header com título e ações */}
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold text-slate-900 mb-1">
@@ -227,18 +229,23 @@ export default function ListaCurriculos() {
                       </h3>
                       <p className="text-indigo-600 font-medium text-sm">{curriculo.jobTitle}</p>
                     </div>
-                    <div className="flex gap-2">
-                      <Link href={`/curriculos/editar/${curriculo.id}`}>
-                        <button
-                          className="text-indigo-600 hover:text-indigo-700 transition-colors p-2"
-                          aria-label={`Editar currículo de ${curriculo.fullName}`}
-                        >
-                          <Edit size={16} />
-                        </button>
-                      </Link>
+                    <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                       <button
-                        onClick={() => handleDelete(curriculo.id)}
-                        className="text-red-500 hover:text-red-700 transition-colors p-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/curriculos/editar?id=${curriculo.id}`);
+                        }}
+                        className="text-indigo-600 hover:text-indigo-700 transition-colors p-2 hover:bg-indigo-50 rounded-md z-10"
+                        aria-label={`Editar currículo de ${curriculo.fullName}`}
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(curriculo.id);
+                        }}
+                        className="text-red-500 hover:text-red-700 transition-colors p-2 hover:bg-red-50 rounded-md z-10"
                         aria-label={`Deletar currículo de ${curriculo.fullName}`}
                       >
                         <Trash2 size={16} />
@@ -246,33 +253,26 @@ export default function ListaCurriculos() {
                     </div>
                   </div>
 
-                  {/* Resumo */}
                   <p className="text-slate-600 text-sm line-clamp-2 mb-3 flex-1">
                     {curriculo.summary}
                   </p>
 
-                  {/* Sugestões */}
                   {suggestionCount > 0 && (
-                    <Link
-                      href={`/curriculos/sugestoes/${curriculo.id}`}
-                      className="mb-3 inline-flex items-center gap-2 text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors"
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/curriculos/sugestoes?id=${curriculo.id}`);
+                      }}
+                      className="mb-3 inline-flex items-center gap-2 text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors hover:bg-amber-50 px-2 py-1 rounded-md z-10 w-fit"
                     >
                       <Lightbulb size={14} />
                       {suggestionCount} sugestão{suggestionCount > 1 ? 'ões' : ''}
-                    </Link>
+                    </button>
                   )}
 
-                  {/* Data */}
                   <div className="text-xs text-slate-400 border-t border-slate-100 pt-3 mt-auto">
                     Salvo em {formatDate(curriculo.createdAt)}
                   </div>
-
-                  {/* Link invisível para visualizar */}
-                  <Link
-                    href={`/curriculos/visualizar/${curriculo.id}`}
-                    className="absolute inset-0 z-0 group-hover:scale-105 transition-transform"
-                    aria-label={`Visualizar currículo de ${curriculo.fullName}`}
-                  />
                 </Card>
               );
             })}

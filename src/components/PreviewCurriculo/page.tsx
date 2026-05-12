@@ -24,14 +24,17 @@ export default function PreviewCurriculo({ data }: PreviewCurriculoProps) {
           {data.profileImage ? (
             <Image 
               src={data.profileImage}
-              alt="Foto de perfil" 
+              alt="Foto de perfil"
+              width={96}
+              height={96}
               className="w-full h-full object-cover"
             />
           ) : (
             <Image 
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName || 'Usuário')}&background=0D8ABC&color=fff&size=256`} 
+              src={`https://ui-avatars.com/api/?name=${fullName || 'Usuário'}&background=0D8ABC&color=fff&size=256`} 
               alt="Foto de perfil" 
-              fill 
+              width={256}
+              height={256}
               className="object-cover"
             />
           )}

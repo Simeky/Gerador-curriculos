@@ -53,7 +53,7 @@ export default function EditarCurriculo() {
       } catch (error) {
         console.error('Erro ao carregar currículo:', error);
         toast.error('Não foi possível carregar o currículo para edição.');
-        router.push('/curriculos/lista');
+        router.push('/curriculos/visualizar');
       } finally {
         setLoading(false);
       }
@@ -85,7 +85,7 @@ export default function EditarCurriculo() {
       }
 
       toast.success('Currículo atualizado com sucesso!');
-      router.push('/curriculos/lista');
+      router.push('/curriculos/visualizar');
     } catch (error) {
       console.error('Erro ao salvar currículo:', error);
       toast.error('Não foi possível salvar o currículo.');
@@ -116,7 +116,7 @@ export default function EditarCurriculo() {
         <div className="flex items-center justify-between print:hidden">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/curriculos/lista">
+              <Link href="/curriculos/visualizar">
                 <Button variant="outline" size="icon" className="h-8 w-8">
                   <ArrowLeft size={16} />
                 </Button>

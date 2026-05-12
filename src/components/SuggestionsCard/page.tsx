@@ -54,7 +54,7 @@ export default function SuggestionsCard({ suggestions, compact = false }: Sugges
     return (
       <Card className="p-6 border-green-200 bg-green-50">
         <div className="flex items-center gap-3">
-          <CheckCircle className="text-green-600 flex-shrink-0" size={24} />
+          <CheckCircle className="text-green-600 shrink-0" size={24} />
           <div>
             <h3 className="font-semibold text-green-900">Currículo Excelente!</h3>
             <p className="text-sm text-green-800">Nenhuma sugestão de melhoria no momento.</p>
@@ -90,7 +90,7 @@ export default function SuggestionsCard({ suggestions, compact = false }: Sugges
             }`}
           >
             <div className="flex gap-3">
-              <IconComponent className={`${config.iconColor} flex-shrink-0 mt-0.5`} size={18} />
+              <IconComponent className={`${config.iconColor} shrink-0 mt-0.5`} size={18} />
               <div className="flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -103,7 +103,7 @@ export default function SuggestionsCard({ suggestions, compact = false }: Sugges
                     </div>
                   </div>
                   <span
-                    className={`text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${
+                    className={`text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap shrink-0 ${
                       suggestion.severity === SuggestionSeverity.CRITICAL &&
                       'bg-red-200 text-red-800'
                     } ${
