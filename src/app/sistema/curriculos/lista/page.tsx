@@ -12,6 +12,7 @@ import {
   Search,
   Trash2,
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -30,6 +31,7 @@ interface Curriculo {
   jobTitle: string;
   summary: string;
   email?: string;
+  profileImage?: string;
   phone?: string;
   skills?: Array<{ skill: string }>;
   experience?: Array<{ company: string; position: string }>;
@@ -49,7 +51,7 @@ export default function ListaCurriculos() {
       try {
         const response = await fetch('/api/curriculo');
         const data = await response.json();
-
+        
         if (!response.ok || !data.sucesso) {
           throw new Error(data.erro || 'Erro ao carregar currículos');
         }
@@ -220,14 +222,35 @@ export default function ListaCurriculos() {
                 <Card
                   key={curriculo.id}
                   className="group hover:shadow-lg hover:border-indigo-300 transition-all p-6 h-full flex flex-col cursor-pointer"
-                  onClick={() => router.push(`/curriculos/visualizar?id=${curriculo.id}`)}
+                  onClick={() => router.push(`/curriculos/visualizar/${curriculo.id}`)}
                 >
                   <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-slate-900 mb-1">
-                        {curriculo.fullName}
-                      </h3>
-                      <p className="text-indigo-600 font-medium text-sm">{curriculo.jobTitle}</p>
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 relative rounded-full overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
+                        {curriculo.profileImage ? (
+                          <Image
+                            src={curriculo.profileImage}
+                            alt={`Foto de ${curriculo.fullName}`}
+                            width={48}
+                            height={48}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Image
+                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(curriculo.fullName || 'Usuário')}&background=0D8ABC&color=fff&size=256`}
+                            alt={`Foto de ${curriculo.fullName}`}
+                            width={48}
+                            height={48}
+                            className="object-cover"
+                          />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold text-slate-900 mb-1">
+                          {curriculo.fullName}
+                        </h3>
+                        <p className="text-indigo-600 font-medium text-sm">{curriculo.jobTitle}</p>
+                      </div>
                     </div>
                     <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                       <button
@@ -266,7 +289,7 @@ export default function ListaCurriculos() {
                       className="mb-3 inline-flex items-center gap-2 text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors hover:bg-amber-50 px-2 py-1 rounded-md z-10 w-fit"
                     >
                       <Lightbulb size={14} />
-                      {suggestionCount} sugestão{suggestionCount > 1 ? 'ões' : ''}
+                      {suggestionCount} sugest{suggestionCount > 1 ? 'ões' : 'ão'}
                     </button>
                   )}
 

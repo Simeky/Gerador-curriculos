@@ -427,7 +427,7 @@ export default function FormCurriculo({ onDataChange, onSave, initialData }: For
             </div>
             <div className="space-y-2">
               <Label>Habilidade</Label>
-              <Input placeholder="Ex: JavaScript, React, etc..." {...register(`skills.${index}.skill`)} />
+              <Input placeholder="Ex: Qualidade ou tecnologia..." {...register(`skills.${index}.skill`)} />
               {errors.skills?.[index]?.skill && <p className="text-sm text-red-500">{errors.skills[index].skill.message}</p>}
             </div>
           </div>

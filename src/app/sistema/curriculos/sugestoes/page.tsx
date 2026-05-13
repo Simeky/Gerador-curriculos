@@ -166,7 +166,7 @@ export default function SuggestoesCurriculo() {
               ✏️ Editar Currículo
             </Button>
           </Link>
-          <Link href={`/curriculos/visualizar?id=${id}`}>
+          <Link href={`/curriculos/visualizar/${id}`}>
             <Button variant="outline" size="lg" className="gap-2">
               👁️ Visualizar
             </Button>

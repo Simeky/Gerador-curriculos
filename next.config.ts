@@ -8,10 +8,6 @@ const nextConfig: NextConfig = {
         destination: '/sistema/curriculos/gerador',
       },
       {
-        source: '/curriculos/visualizar',
-        destination: '/sistema/curriculos/detalhes',
-      },
-      {
         source: '/curriculos/editar',
         destination: '/sistema/curriculos/editar',
       },
@@ -19,6 +15,14 @@ const nextConfig: NextConfig = {
         source: '/curriculos/sugestoes',
         destination: '/sistema/curriculos/sugestoes',
       },
+      {
+        source: '/curriculos/visualizar/:id',
+        destination: '/sistema/curriculos/detalhes?id=:id',
+      },
+      {
+        source: '/curriculos/visualizar',
+        destination: '/sistema/curriculos/lista',
+      }
     ];
   },
   images: {
