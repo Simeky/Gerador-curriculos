@@ -62,20 +62,26 @@ export default function EditarCurriculo() {
     fetchCurriculo();
   }, [id, router]);
 
-  const handleSave = async () => {
-    if (!resumeData) {
+  const handleSave = async (data?: ResumeData) => {
+    if (!id) {
+      toast.error('ID do currículo não encontrado.');
+      return;
+    }
+
+    const bodyData = data ?? resumeData;
+    if (!bodyData) {
       toast.error('Nenhum currículo para salvar.');
       return;
     }
 
     setSaving(true);
     try {
-      const response = await fetch(`/api/curriculo?id=${encodeURIComponent(id || '')}`, {
+      const response = await fetch(`/api/curriculo?id=${encodeURIComponent(id)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(resumeData),
+        body: JSON.stringify(bodyData),
       });
 
       const result = await response.json();
@@ -126,7 +132,7 @@ export default function EditarCurriculo() {
             <p className="text-slate-500">Atualize as informações do seu currículo</p>
           </div>
           <Button
-            onClick={handleSave}
+            onClick={() => handleSave()}
             disabled={saving}
             className="flex items-center gap-2"
           >
@@ -141,6 +147,7 @@ export default function EditarCurriculo() {
             {resumeData && (
               <FormCurriculo
                 onDataChange={setResumeData}
+                onSave={handleSave}
                 initialData={resumeData}
               />
             )}

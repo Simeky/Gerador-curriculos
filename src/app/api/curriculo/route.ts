@@ -196,6 +196,15 @@ export async function PUT(request: NextRequest) {
 
     console.log("📌 [PUT /api/curriculo] Atualizando currículo ID:", id);
     
+    const curriculoExistente = await buscarCurriculoPorId(id);
+    if (!curriculoExistente) {
+      console.warn("⚠️ [PUT /api/curriculo] Currículo não encontrado para atualização:", id);
+      return NextResponse.json(
+        { erro: "Currículo não encontrado" },
+        { status: 404 }
+      );
+    }
+
     await atualizarCurriculo(id, body);
     console.log("✅ [PUT /api/curriculo] Currículo atualizado com sucesso.");
 

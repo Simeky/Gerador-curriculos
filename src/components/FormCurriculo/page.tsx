@@ -19,6 +19,7 @@ import {
 import {
   useFieldArray,
   useForm,
+  useWatch,
 } from 'react-hook-form';
 import {
   FaGithub,
@@ -48,10 +49,10 @@ export default function FormCurriculo({ onDataChange, onSave, initialData }: For
   
   const {
     register,
-    watch,
     getValues,
     setValue,
     control,
+    reset,
     formState: { errors, isValid },
   } = useForm<ResumeData>({
     resolver: yupResolver(resumeSchema as never),
@@ -87,15 +88,23 @@ export default function FormCurriculo({ onDataChange, onSave, initialData }: For
     name: "skills",
   });
 
+  const watchedValues = useWatch({ control });
+  const profileImageValue = useWatch({ control, name: 'profileImage' });
+  const hasInitialized = useRef(false);
+
   useEffect(() => {
-    onDataChange(getValues() as ResumeData);
-    
-    const subscription = watch((value: { [x: string]: unknown; }) => {
-      onDataChange(value as ResumeData);
-    });
-    
-    return () => subscription.unsubscribe();
-  }, [watch, getValues, onDataChange]);
+    if (initialData && !hasInitialized.current) {
+      reset(initialData);
+      onDataChange(initialData);
+      hasInitialized.current = true;
+    }
+  }, [initialData, reset, onDataChange]);
+
+  useEffect(() => {
+    if (watchedValues) {
+      onDataChange(watchedValues as ResumeData);
+    }
+  }, [watchedValues, onDataChange]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -130,7 +139,7 @@ export default function FormCurriculo({ onDataChange, onSave, initialData }: For
     if (!isValid) {
       // Coletar todos os erros do formulário
       const erros: string[] = [];
-      const fields = watch();
+      const fields = getValues();
       
       if (fields.fullName === '' || fields.fullName === undefined) {
         erros.push('Nome completo');
@@ -209,6 +218,11 @@ export default function FormCurriculo({ onDataChange, onSave, initialData }: For
 
     const curriculoData = getValues();
 
+    if (onSave) {
+      await onSave(curriculoData);
+      return;
+    }
+
     try {
       console.log('📤 [FormCurriculo] Enviando currículo para API:', curriculoData);
       
@@ -247,10 +261,6 @@ export default function FormCurriculo({ onDataChange, onSave, initialData }: For
       });
 
       console.log('✅ [FormCurriculo] Currículo salvo com ID:', result.id);
-
-      if (onSave) {
-        onSave(curriculoData);
-      }
     } catch (error) {
       console.error('❌ [FormCurriculo] Erro ao salvar currículo no banco:', error);
       
@@ -307,7 +317,7 @@ export default function FormCurriculo({ onDataChange, onSave, initialData }: For
             </Button>
           </div>
           <p className="text-xs text-slate-500">Máximo 5MB. Formatos: JPG, PNG, GIF, WebP</p>
-          {watch('profileImage') && (
+          {profileImageValue && (
             <p className="text-sm text-green-600">✓ Imagem carregada com sucesso!</p>
           )}
         </div>
