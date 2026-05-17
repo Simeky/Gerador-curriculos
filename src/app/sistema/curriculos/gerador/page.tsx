@@ -8,6 +8,7 @@ import { ResumeData } from '@/app/sistema/curriculos/gerador/validacao';
 import FormCurriculo from '@/components/FormCurriculo/page';
 import Nav from '@/components/nav/page';
 import PreviewCurriculo from '@/components/PreviewCurriculo/page';
+import RealTimeSuggestions from '@/components/RealTimeSuggestions/page';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -33,7 +34,7 @@ export default function Gerador() {
             <FormCurriculo onDataChange={setResumeData} />
           </Card>
 
-          <section className="sticky top-8 print:static">
+          <section className="lg:col-span-1 sticky top-8 print:static">
             <Card className="p-0 md:p-0 min-h-200 print:border-none print:shadow-none">
               <div className="p-6 md:p-8 pb-0 flex justify-between items-center print:hidden border-b border-slate-100 mb-6">
                 <h2 className="text-2xl font-semibold">Visualização</h2>
@@ -58,6 +59,9 @@ export default function Gerador() {
             </Card>
           </section>
         </div>
+
+        {/* Componente de sugestões (botão flutuante) */}
+        <RealTimeSuggestions resumeData={resumeData} />
       </div>
     </main>
   );

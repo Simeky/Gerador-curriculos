@@ -15,18 +15,29 @@ interface PreviewCurriculoProps {
 }
 
 export default function PreviewCurriculo({ data }: PreviewCurriculoProps) {
-  const { fullName, jobTitle, email, phone, github, linkedin, summary } = data;
+  const { fullName, cpf, jobTitle, email, phone, github, linkedin, summary } = data;
 
   return (
     <div className="bg-white p-8 md:p-10 font-sans text-slate-800" id="resume-preview">
       <header className="flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-slate-200 pb-6 mb-6">
         <div className="w-24 h-24 relative rounded-full overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
-          <Image 
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName || 'Usuário')}&background=0D8ABC&color=fff&size=256`} 
-            alt="Foto de perfil" 
-            fill 
-            className="object-cover"
-          />
+          {data.profileImage ? (
+            <Image 
+              src={data.profileImage}
+              alt="Foto de perfil"
+              width={96}
+              height={96}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <Image 
+              src={`https://ui-avatars.com/api/?name=${fullName || 'Usuário'}&background=0D8ABC&color=fff&size=256`} 
+              alt="Foto de perfil" 
+              width={256}
+              height={256}
+              className="object-cover"
+            />
+          )}
         </div>
         
         <div className="flex-1 text-center md:text-left">
@@ -34,6 +45,12 @@ export default function PreviewCurriculo({ data }: PreviewCurriculoProps) {
           <p className="text-xl text-indigo-600 font-medium mb-4">{jobTitle || "Cargo Desejado"}</p>
           
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 text-sm text-slate-600">
+            {cpf && (
+              <div className="flex items-center gap-2">
+                <span className="font-medium">CPF:</span>
+                <span>{cpf}</span>
+              </div>
+            )}
             {email && (
               <div className="flex items-center gap-2">
                 <FaEnvelope className="text-slate-400" />
@@ -70,6 +87,19 @@ export default function PreviewCurriculo({ data }: PreviewCurriculoProps) {
           <p className="text-slate-700 leading-relaxed whitespace-pre-line wrap-break-word">
             {summary}
           </p>
+        </section>
+      )}
+
+      {data.skills && data.skills.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-lg font-bold text-slate-900 uppercase tracking-wider mb-3 border-b-2 border-indigo-600 inline-block pb-1">
+            Habilidades
+          </h2>
+          <ul className="list-disc list-inside space-y-1 text-slate-700">
+            {data.skills.map((skill, index) => (
+              <li key={index}>{skill.skill}</li>
+            ))}
+          </ul>
         </section>
       )}
 
