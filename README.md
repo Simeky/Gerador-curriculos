@@ -83,4 +83,5 @@ http://localhost:3000
 
 ---
 Disponível em gerador-curriculos-lcr4.vercel.app
+
 Desenvolvido para gerar currículos profissionais de forma rápida e intuitiva.
